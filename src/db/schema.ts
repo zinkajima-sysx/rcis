@@ -170,7 +170,7 @@ export const handoverPhotos = pgTable('handover_photos', {
 });
 
 // Relations
-export const relations = {
+export const dbRelations = {
   users: {
     userEntityRoles: (users) => relations(users, {
       entityRoles: (userEntityRoles) => relations(userEntityRoles),

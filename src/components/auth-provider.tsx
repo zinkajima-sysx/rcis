@@ -8,7 +8,8 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { appUsers, type AppUser } from "@/lib/rci-data";
+import { type AppUser } from "@/lib/rci-data";
+import { loginAction } from "@/lib/auth-actions";
 
 const SESSION_STORAGE_KEY = "rci-session";
 
@@ -25,7 +26,7 @@ type LoginInput = {
 type AuthContextValue = {
   isReady: boolean;
   session: AuthSession | null;
-  login: (input: LoginInput) => { ok: true } | { ok: false; message: string };
+  login: (input: LoginInput) => Promise<{ ok: true } | { ok: false; message: string }>;
   logout: () => void;
 };
 
@@ -70,25 +71,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     readStoredSession()
   );
 
-  const login: AuthContextValue["login"] = ({ username, password }) => {
-    const normalizedUsername = username.trim().toLowerCase();
-    const normalizedPassword = password.trim();
+  const login: AuthContextValue["login"] = async ({ username, password }) => {
+    const result = await loginAction({ username, password });
 
-    const user = appUsers.find(
-      (entry) =>
-        entry.username.toLowerCase() === normalizedUsername &&
-        entry.password === normalizedPassword
-    );
-
-    if (!user) {
+    if (!result.ok) {
       return {
         ok: false,
-        message:
-          "Username atau password belum cocok. Coba salah satu akun demo yang tersedia.",
+        message: result.message || "Terjadi kesalahan saat login. Silakan coba lagi.",
       };
     }
 
-    const nextSession = toSession(user);
+    const nextSession = result.session as AuthSession;
     window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession));
     startTransition(() => setSession(nextSession));
 
