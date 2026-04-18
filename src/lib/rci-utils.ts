@@ -1,7 +1,4 @@
 import {
-  equipmentCategories,
-  medicalEquipments,
-  railClinicActivities,
   referenceDate,
   type MedicalEquipment,
   type UserRole,
@@ -58,26 +55,12 @@ export function getCalibrationTone(date: string): CalibrationTone {
   return "safe";
 }
 
-function getCalibrationLabel(date: string) {
-  const days = getDaysUntilCalibration(date);
-
-  if (days < 0) {
-    return `Terlambat ${Math.abs(days)} hari`;
-  }
-
-  if (days <= 30) {
-    return `Jatuh tempo ${days} hari lagi`;
-  }
-
-  return `Tenggat ${days} hari lagi`;
-}
-
-export function getDashboardMetrics() {
-  const total = medicalEquipments.length;
-  const layak = medicalEquipments.filter(
+export function getDashboardMetrics(equipment: MedicalEquipment[]) {
+  const total = equipment.length;
+  const layak = equipment.filter(
     (item) => item.statusKelayakan === "Layak Pakai"
   ).length;
-  const alerts = medicalEquipments.filter(
+  const alerts = equipment.filter(
     (item) => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe"
   ).length;
 
@@ -86,7 +69,7 @@ export function getDashboardMetrics() {
       id: "total" as const,
       label: "Total alkes",
       value: total,
-      helper: "Seluruh aset kesehatan yang terdata pada prototype ini.",
+      helper: "Seluruh aset kesehatan yang terdata pada sistem.",
     },
     {
       id: "ready" as const,
@@ -98,101 +81,40 @@ export function getDashboardMetrics() {
       id: "alerts" as const,
       label: "Alert kalibrasi",
       value: alerts,
-      helper: "Alat yang sudah lewat atau kurang dari 30 hari ke due date.",
+      helper: "Alat yang butuh kalibrasi segera.",
     },
     {
       id: "activities" as const,
-      label: "Kegiatan terdokumentasi",
-      value: railClinicActivities.length,
-      helper: "Entri galeri dengan standar dua foto unggulan.",
+      label: "Kegiatan",
+      value: 0,
+      helper: "Total kegiatan baksos yang terdokumentasi.",
     },
   ];
 }
 
-export function getCalibrationAlerts() {
-  return medicalEquipments
+export function getCalibrationAlerts(equipment: MedicalEquipment[]) {
+  return equipment
     .filter((item) => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe")
-    .sort(
-      (first, second) =>
-        getDaysUntilCalibration(first.tglRencanaKalibrasi) -
-        getDaysUntilCalibration(second.tglRencanaKalibrasi)
-    )
-    .map((item) => ({
-      ...item,
-      calibrationTone: getCalibrationTone(item.tglRencanaKalibrasi),
-      calibrationLabel: getCalibrationLabel(item.tglRencanaKalibrasi),
-    }));
+    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime());
 }
 
-export function getUpcomingSchedule() {
-  return [...medicalEquipments]
-    .sort(
-      (first, second) =>
-        parseDate(first.tglRencanaKalibrasi).getTime() -
-        parseDate(second.tglRencanaKalibrasi).getTime()
-    )
-    .map((item) => ({
-      ...item,
-      calibrationTone: getCalibrationTone(item.tglRencanaKalibrasi),
-      calibrationLabel: getCalibrationLabel(item.tglRencanaKalibrasi),
-    }));
+export function getUpcomingSchedule(equipment: MedicalEquipment[]) {
+  return equipment
+    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime())
+    .filter((item) => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe");
 }
 
-export function getCategoryTotals() {
-  return equipmentCategories.map((category) => {
-    const items = medicalEquipments.filter(
-      (item) => item.kategoriId === category.id
-    );
-
-    return {
-      id: category.id,
-      nama: category.nama,
-      total: items.length,
-      layak: items.filter((item) => item.statusKelayakan === "Layak Pakai")
-        .length,
-      perbaikan: items.filter(
-        (item) => item.statusKelayakan === "Butuh Perbaikan"
-      ).length,
-      rusak: items.filter(
-        (item) => item.statusKelayakan === "Rusak / Tidak Layak"
-      ).length,
-    };
-  });
+export function getCategoryTotals(equipment: MedicalEquipment[], categories: EquipmentCategory[]) {
+  return categories.map(cat => ({
+    id: cat.code,
+    total: equipment.filter(item => item.kategoriId === cat.code).length
+  }));
 }
 
-export function getInventorySummary(items: MedicalEquipment[]) {
-  return {
-    total: items.length,
-    layak: items.filter((item) => item.statusKelayakan === "Layak Pakai").length,
-    butuhTindakan: items.filter(
-      (item) => item.statusKelayakan !== "Layak Pakai"
-    ).length,
-  };
+export function getTotalActivities(activities: RailClinicActivity[]) {
+  return activities.length;
 }
 
-export function getGallerySummary() {
-  const totalVisitors = railClinicActivities.reduce(
-    (sum, activity) => sum + activity.jumlahLayanan,
-    0
-  );
-  const areaCount = new Set(railClinicActivities.map((activity) => activity.wilayahDaop))
-    .size;
-
-  return [
-    {
-      id: "activities" as const,
-      label: "Total kegiatan",
-      value: railClinicActivities.length,
-    },
-    {
-      id: "coverage" as const,
-      label: "Cakupan wilayah",
-      value: `${areaCount} daop`,
-    },
-    {
-      id: "visitors" as const,
-      label: "Layanan tercatat",
-      value: totalVisitors,
-    },
-  ];
+export function getRecentActivities(activities: RailClinicActivity[]) {
+  return activities.slice(0, 2);
 }

@@ -1,7 +1,6 @@
 import { db } from './index';
 import * as schema from './schema';
-import { appUsers, equipmentCategories, medicalEquipments, railClinicActivities, activityPhotos, handoverRecords, currentUser } from '../lib/rci-data';
-import { eq } from 'drizzle-orm';
+import { mockAppUsers } from '../lib/rci-data';
 
 async function seed() {
   console.log('🚀 Starting seed process...');
@@ -25,11 +24,11 @@ async function seed() {
 
   // 1. Seed Entities
   console.log('🌱 Seeding entities...');
-  const mainEntity = await db.insert(schema.entities).values({
+  const [mainEntity] = await db.insert(schema.entities).values({
     code: 'rail-clinic-pt-kai',
     name: 'Rail Clinic PT KAI',
     type: 'unit',
-  }).returning().then(res => res[0]);
+  }).returning();
   console.log('✅ Entities seeded');
 
   // 2. Seed Roles
@@ -42,10 +41,10 @@ async function seed() {
 
   // 3. Seed Users
   console.log('🌱 Seeding users...');
-  const userPromises = appUsers.map(async (user) => {
+  const userPromises = mockAppUsers.map(async (user) => {
     return db.insert(schema.users).values({
       username: user.username,
-      passwordHash: user.password, // In real app, hash this!
+      passwordHash: user.password,
       namaLengkap: user.namaLengkap,
       unit: user.unit,
       defaultEntityId: mainEntity.id,
@@ -67,109 +66,10 @@ async function seed() {
   await Promise.all(userRolePromises);
   console.log('✅ User-Entity-Roles seeded');
 
-  // 5. Seed Equipment Categories
-  console.log('🌱 Seeding equipment categories...');
-  // Mapping mock IDs to codes
-  const catMap = {
-    'alkes-elektromedis': 'CAT-01',
-    'alkes-non-elektromedis': 'CAT-02',
-    'perlengkapan-pendukung': 'CAT-03',
-  };
-  const catValues = Object.entries(catMap).map(([id, code]) => ({
-    code,
-    name: id.replace(/-/g, ' ').toUpperCase(),
-  }));
-  const insertedCats = await db.insert(schema.equipmentCategories).values(catValues).returning();
-  console.log('✅ Categories seeded');
-
-  // 6. Seed Medical Equipment
-  console.log('🌱 Seeding medical equipment...');
-  const equipPromises = medicalEquipments.map(async (item) => {
-    const cat = insertedCats.find(c => c.code === catMap[item.kategoriId]);
-    const user = insertedUsers.find(u => u.username === 'mira.pratama'); // Default creator
-    
-    return db.insert(schema.medicalEquipment).values({
-      categoryId: cat?.id,
-      name: item.namaAlat,
-      brandType: item.merekTipe,
-      acquisitionYear: item.tahunPengadaan,
-      lastCalibrationDate: new Date(item.tglKalibrasiTerakhir),
-      nextCalibrationDate: new Date(item.tglRencanaKalibrasi),
-      status: item.statusKelayakan as any,
-      location: item.lokasiPenempatan,
-      createdBy: user?.id,
-      visualTone: item.visualTone as any,
-      calibrationNote: item.keteranganKalibrasi,
-      imageUrl: item.imageUrl,
-    });
-  });
-  await Promise.all(equipPromises);
-  console.log('✅ Medical Equipment seeded');
-
-  // 7. Seed Activities
-  console.log('🌱 Seeding activities...');
-  const activityPromises = railClinicActivities.map(async (act) => {
-    const user = insertedUsers.find(u => u.username === 'mira.pratama');
-    const [insertedAct] = await db.insert(schema.railClinicActivities).values({
-      name: act.namaKegiatan,
-      date: new Date(act.tanggalKegiatan),
-      location: act.lokasiStasiun,
-      region: act.wilayahDaop,
-      serviceCount: act.jumlahLayanan,
-      description: act.keterangan,
-      createdBy: user?.id,
-    }).returning();
-
-    // Seed Activity Photos
-    await Promise.all(act.fotos.map(photo => 
-      db.insert(schema.activityPhotos).values({
-        activityId: insertedAct.id,
-        title: photo.judul,
-        focus: photo.fokus,
-        tone: photo.tone as any,
-        imageUrl: photo.imageUrl,
-      })
-    ));
-
-    return insertedAct;
-  });
-  const insertedActs = await Promise.all(activityPromises);
-  console.log('✅ Activities and Photos seeded');
-
-  // 8. Seed Handovers
-  console.log('🌱 Seeding handovers...');
-  const handoverPromises = handoverRecords.map(async (ho) => {
-    const sourceAct = insertedActs.find(a => a.name.includes(ho.kegiatanAsal.split(' - ')[0]));
-    const targetAct = insertedActs.find(a => a.name.includes(ho.kegiatanTujuan.split(' - ')[0]));
-    
-    const [insertedHo] = await db.insert(schema.handovers).values({
-      sourceActivityId: sourceAct?.id,
-      targetActivityId: targetAct?.id,
-      handoverDate: new Date(ho.tanggalSerahTerima),
-      senderNipp: ho.nippPenyerah,
-      senderName: ho.namaPenyerah,
-      receiverNipp: ho.nippPenerima,
-      receiverName: ho.namaPenerima,
-    }).returning();
-
-    await Promise.all(ho.fotos.map(photo => 
-      db.insert(schema.handoverPhotos).values({
-        handoverId: insertedHo.id,
-        title: photo.judul,
-        focus: photo.fokus,
-        tone: photo.tone as any,
-        imageUrl: photo.imageUrl,
-      })
-    ));
-  });
-  await Promise.all(handoverPromises);
-  console.log('✅ Handovers seeded');
-
   console.log('🎉 Seed completed successfully!');
 }
 
 seed().catch(err => {
-  console.error('❌ Seed failed:');
-  console.error(err);
+  console.error('❌ Seed failed:', err);
   process.exit(1);
 });

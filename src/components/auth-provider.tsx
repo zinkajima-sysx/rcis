@@ -51,16 +51,6 @@ function readStoredSession() {
   }
 }
 
-function toSession(user: AppUser): AuthSession {
-  return {
-    id: user.id,
-    username: user.username,
-    namaLengkap: user.namaLengkap,
-    role: user.role,
-    unit: user.unit,
-  };
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isReady = useSyncExternalStore(
     () => () => {},

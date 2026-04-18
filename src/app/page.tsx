@@ -21,13 +21,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { equipmentCategories, railClinicActivities } from "@/lib/rci-data";
+import {
+  getEquipmentCategories,
+  getMedicalEquipments,
+  getRailClinicActivities,
+} from "@/lib/rci-data";
 import {
   formatDateLong,
   getCalibrationAlerts,
   getCategoryTotals,
   getDashboardMetrics,
   getUpcomingSchedule,
+  getTotalActivities,
+  getRecentActivities,
 } from "@/lib/rci-utils";
 import { cn } from "@/lib/utils";
 
@@ -73,18 +79,26 @@ const metricCardStyles = {
   },
 } as const;
 
-export default function Home() {
-  const metrics = getDashboardMetrics();
-  const alerts = getCalibrationAlerts().slice(0, 4);
-  const schedule = getUpcomingSchedule().slice(0, 6);
-  const categoryTotals = getCategoryTotals();
-  const previewActivities = railClinicActivities.slice(0, 2);
+export default async function Home() {
+  const allEquipment = await getMedicalEquipments();
+  const categories = await getEquipmentCategories();
+  const activities = await getRailClinicActivities();
+
+  const metrics = getDashboardMetrics(allEquipment);
+  const alerts = getCalibrationAlerts(allEquipment).slice(0, 4);
+  const schedule = getUpcomingSchedule(allEquipment).slice(0, 6);
+  const categoryTotals = getCategoryTotals(allEquipment, categories);
+  const previewActivities = getRecentActivities(activities);
+
   const elektromedisCount =
     categoryTotals.find((item) => item.id === "alkes-elektromedis")?.total ?? 0;
   const nonElektromedisCount =
     categoryTotals.find((item) => item.id === "alkes-non-elektromedis")?.total ?? 0;
   const perlengkapanPendukungCount =
     categoryTotals.find((item) => item.id === "perlengkapan-pendukung")?.total ?? 0;
+
+  // Update activity count in metrics
+  metrics[3].value = getTotalActivities(activities);
 
   return (
     <div className="flex flex-col gap-6">
@@ -115,7 +129,7 @@ export default function Home() {
                 </div>
                 <div className="rounded-xl bg-accent/20 p-3">
                   <div className="font-mono text-lg font-semibold">
-                    {railClinicActivities.length * 2}
+                    {previewActivities.length * 2}
                   </div>
                   <div className="text-muted-foreground">foto kegiatan siap</div>
                 </div>
@@ -268,7 +282,7 @@ export default function Home() {
                   <div className="text-sm text-muted-foreground">
                     {alert.merekTipe} •{" "}
                     {
-                      equipmentCategories.find(
+                      categories.find(
                         (category) => category.id === alert.kategoriId
                       )?.nama
                     }
