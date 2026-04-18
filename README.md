@@ -2,6 +2,18 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Setup
+
+1. Copy `.env.example` to `.env.local`
+2. Fill in your Neon, Cloudinary, and app settings
+3. For Vercel deployment, add the same keys in `Project Settings -> Environment Variables`
+
+Important:
+
+- `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `SESSION_SECRET`, and `CLOUDINARY_API_SECRET` must stay server-side only
+- Only variables starting with `NEXT_PUBLIC_` are exposed to the browser
+- Image files should be stored in Cloudinary, while metadata and business data should be stored in Neon
+
 First, run the development server:
 
 ```bash
@@ -29,8 +41,25 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Repository / source code: GitHub
+- Frontend hosting: Vercel
+- Database: Neon Postgres
+- File storage: Cloudinary
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Before deploying, make sure `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_SITE_URL` use your production domain.
+
+### Vercel Setup
+
+1. Import the GitHub repository into Vercel
+2. Set the project root directory to `web`
+3. Add the required environment variables from `.env.example`
+4. Redeploy after secrets or URLs change
+
+For local development with Vercel-linked env vars:
+
+```bash
+vercel link
+vercel env pull .env.local
+```
