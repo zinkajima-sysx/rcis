@@ -415,7 +415,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {activity.fotos.map((photo: { id: string; judul: string; fokus: string; tone: string; imageUrl: string }) => (
+                  {activity.fotos.map((photo: { id: string; judul: string; fokus: string; tone: "ocean" | "ember" | "meadow" | "dusk"; imageUrl: string }) => (
                     <PhotoTile
                       key={photo.id}
                       title={photo.judul}

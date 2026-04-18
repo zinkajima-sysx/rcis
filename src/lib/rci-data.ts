@@ -41,6 +41,11 @@ export type MedicalEquipment = {
   imageUrl: string;
 };
 
+export type EnhancedMedicalEquipment = MedicalEquipment & {
+  calibrationTone: "safe" | "warning" | "danger";
+  calibrationLabel: string;
+};
+
 export type RailClinicActivity = {
   id: string;
   namaKegiatan: string;
@@ -49,7 +54,7 @@ export type RailClinicActivity = {
   wilayahDaop: string;
   jumlahLayanan: number;
   keterangan: string;
-  fotos: [ActivityPhoto, ActivityPhoto];
+  fotos: ActivityPhoto[];
   createdBy: string;
 };
 
@@ -188,15 +193,6 @@ export async function getRailClinicActivities() {
     ],
     createdBy: activity.createdBy || "",
   }));
-}
-
-export async function getRailClinicActivities() {
-  const activities = await db.select().from(schema.railClinicActivities);
-  const activitiesWithPhotos = await Promise.all(activities.map(async (act) => {
-    const photos = await db.select().from(schema.activityPhotos).where(eq(schema.activityPhotos.activityId, act.id));
-    return { ...act, fotos: photos };
-  }));
-  return activitiesWithPhotos;
 }
 
 export async function getHandoverRecords() {

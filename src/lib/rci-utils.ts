@@ -1,6 +1,7 @@
 import {
   referenceDate,
   type MedicalEquipment,
+  type EnhancedMedicalEquipment,
   type UserRole,
   type EquipmentCategory,
   type RailClinicActivity,
@@ -71,7 +72,7 @@ function getCalibrationLabel(date: string) {
   return `Tenggat ${days} hari lagi`;
 }
 
-export function enhanceEquipmentWithCalibration(equipment: MedicalEquipment[]) {
+export function enhanceEquipmentWithCalibration(equipment: MedicalEquipment[]): EnhancedMedicalEquipment[] {
   return equipment.map(item => ({
     ...item,
     calibrationTone: getCalibrationTone(item.tglRencanaKalibrasi),
