@@ -34,6 +34,7 @@ import {
   getUpcomingSchedule,
   getTotalActivities,
   getRecentActivities,
+  enhanceEquipmentWithCalibration,
 } from "@/lib/rci-utils";
 import { cn } from "@/lib/utils";
 
@@ -84,10 +85,12 @@ export default async function Home() {
   const categories = await getEquipmentCategories();
   const activities = await getRailClinicActivities();
 
-  const metrics = getDashboardMetrics(allEquipment);
-  const alerts = getCalibrationAlerts(allEquipment).slice(0, 4);
-  const schedule = getUpcomingSchedule(allEquipment).slice(0, 6);
-  const categoryTotals = getCategoryTotals(allEquipment, categories);
+  const enhancedEquipment = enhanceEquipmentWithCalibration(allEquipment);
+
+  const metrics = getDashboardMetrics(enhancedEquipment);
+  const alerts = getCalibrationAlerts(enhancedEquipment).slice(0, 4);
+  const schedule = getUpcomingSchedule(enhancedEquipment).slice(0, 6);
+  const categoryTotals = getCategoryTotals(enhancedEquipment, categories);
   const previewActivities = getRecentActivities(activities);
 
   const elektromedisCount =
@@ -412,7 +415,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {activity.fotos.map((photo) => (
+                  {activity.fotos.map((photo: { id: string; judul: string; fokus: string; tone: string; imageUrl: string }) => (
                     <PhotoTile
                       key={photo.id}
                       title={photo.judul}

@@ -102,11 +102,15 @@ export async function getUsers() {
 }
 
 export async function getEquipmentCategories() {
-  return await db.select().from(schema.equipmentCategories);
+  const categories = await db.select().from(schema.equipmentCategories);
+  return categories.map(cat => ({
+    id: cat.code as EquipmentCategory["id"],
+    nama: cat.name,
+  }));
 }
 
 export async function getMedicalEquipments() {
-  return await db.select({
+  const equipments = await db.select({
     id: schema.medicalEquipment.id,
     kategoriId: schema.equipmentCategories.code,
     namaAlat: schema.medicalEquipment.name,
@@ -123,6 +127,67 @@ export async function getMedicalEquipments() {
   })
   .from(schema.medicalEquipment)
   .leftJoin(schema.equipmentCategories, eq(schema.medicalEquipment.categoryId, schema.equipmentCategories.id));
+
+  return equipments
+    .filter(item => item.kategoriId !== null) // Filter out items without category
+    .map(item => ({
+      id: item.id,
+      kategoriId: item.kategoriId as EquipmentCategory["id"],
+      namaAlat: item.namaAlat,
+      merekTipe: item.merekTipe || "",
+      tahunPengadaan: item.tahunPengadaan || 0,
+      tglKalibrasiTerakhir: item.tglKalibrasiTerakhir?.toISOString().split('T')[0] || "",
+      tglRencanaKalibrasi: item.tglRencanaKalibrasi?.toISOString().split('T')[0] || "",
+      statusKelayakan: item.statusKelayakan,
+      lokasiPenempatan: item.lokasiPenempatan || "",
+      createdBy: item.createdBy || "",
+      visualTone: (item.visualTone as PhotoTone) || "ocean",
+      keteranganKalibrasi: item.keteranganKalibrasi || "",
+      imageUrl: item.imageUrl || "",
+    }));
+}
+
+export async function getRailClinicActivities() {
+  const activities = await db.select({
+    id: schema.railClinicActivities.id,
+    namaKegiatan: schema.railClinicActivities.name,
+    tanggalKegiatan: schema.railClinicActivities.date,
+    lokasiStasiun: schema.railClinicActivities.location,
+    wilayahDaop: schema.railClinicActivities.region,
+    jumlahLayanan: schema.railClinicActivities.serviceCount,
+    keterangan: schema.railClinicActivities.description,
+    createdBy: schema.railClinicActivities.createdBy,
+  })
+  .from(schema.railClinicActivities);
+
+  // For now, return activities without photos since we need to join with activityPhotos
+  // This is a simplified version - in a real app you'd join with photos
+  return activities.map(activity => ({
+    id: activity.id,
+    namaKegiatan: activity.namaKegiatan,
+    tanggalKegiatan: activity.tanggalKegiatan?.toISOString().split('T')[0] || "",
+    lokasiStasiun: activity.lokasiStasiun,
+    wilayahDaop: activity.wilayahDaop || "",
+    jumlahLayanan: activity.jumlahLayanan || 0,
+    keterangan: activity.keterangan || "",
+    fotos: [
+      {
+        id: `${activity.id}-photo-1`,
+        judul: "Foto Kegiatan 1",
+        fokus: "Aktivitas utama",
+        tone: "ocean" as PhotoTone,
+        imageUrl: "/placeholder-activity.jpg",
+      },
+      {
+        id: `${activity.id}-photo-2`,
+        judul: "Foto Kegiatan 2",
+        fokus: "Dokumentasi",
+        tone: "meadow" as PhotoTone,
+        imageUrl: "/placeholder-activity.jpg",
+      },
+    ],
+    createdBy: activity.createdBy || "",
+  }));
 }
 
 export async function getRailClinicActivities() {

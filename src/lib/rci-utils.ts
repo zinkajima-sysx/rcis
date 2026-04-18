@@ -2,6 +2,8 @@ import {
   referenceDate,
   type MedicalEquipment,
   type UserRole,
+  type EquipmentCategory,
+  type RailClinicActivity,
 } from "@/lib/rci-data";
 
 export type CalibrationTone = "safe" | "warning" | "danger";
@@ -55,6 +57,54 @@ export function getCalibrationTone(date: string): CalibrationTone {
   return "safe";
 }
 
+function getCalibrationLabel(date: string) {
+  const days = getDaysUntilCalibration(date);
+
+  if (days < 0) {
+    return `Terlambat ${Math.abs(days)} hari`;
+  }
+
+  if (days <= 30) {
+    return `Jatuh tempo ${days} hari lagi`;
+  }
+
+  return `Tenggat ${days} hari lagi`;
+}
+
+export function enhanceEquipmentWithCalibration(equipment: MedicalEquipment[]) {
+  return equipment.map(item => ({
+    ...item,
+    calibrationTone: getCalibrationTone(item.tglRencanaKalibrasi),
+    calibrationLabel: getCalibrationLabel(item.tglRencanaKalibrasi),
+  }));
+}
+
+export function getInventorySummary(equipment: MedicalEquipment[]) {
+  const total = equipment.length;
+  const layak = equipment.filter(item => item.statusKelayakan === "Layak Pakai").length;
+  const perbaikan = equipment.filter(item => item.statusKelayakan === "Butuh Perbaikan").length;
+  const rusak = equipment.filter(item => item.statusKelayakan === "Rusak / Tidak Layak").length;
+  const alerts = equipment.filter(item => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe").length;
+
+  return {
+    total,
+    layak,
+    perbaikan,
+    rusak,
+    alerts,
+  };
+}
+
+export function getGallerySummary(activities: RailClinicActivity[]) {
+  const total = activities.length;
+  const totalPhotos = activities.reduce((sum, activity) => sum + activity.fotos.length, 0);
+
+  return {
+    totalActivities: total,
+    totalPhotos,
+  };
+}
+
 export function getDashboardMetrics(equipment: MedicalEquipment[]) {
   const total = equipment.length;
   const layak = equipment.filter(
@@ -105,10 +155,21 @@ export function getUpcomingSchedule(equipment: MedicalEquipment[]) {
 }
 
 export function getCategoryTotals(equipment: MedicalEquipment[], categories: EquipmentCategory[]) {
-  return categories.map(cat => ({
-    id: cat.code,
-    total: equipment.filter(item => item.kategoriId === cat.code).length
-  }));
+  return categories.map(cat => {
+    const total = equipment.filter(item => item.kategoriId === cat.id).length;
+    const layak = equipment.filter(item => item.kategoriId === cat.id && item.statusKelayakan === "Layak Pakai").length;
+    const perbaikan = equipment.filter(item => item.kategoriId === cat.id && item.statusKelayakan === "Butuh Perbaikan").length;
+    const rusak = equipment.filter(item => item.kategoriId === cat.id && item.statusKelayakan === "Rusak / Tidak Layak").length;
+
+    return {
+      id: cat.id,
+      nama: cat.nama,
+      total,
+      layak,
+      perbaikan,
+      rusak,
+    };
+  });
 }
 
 export function getTotalActivities(activities: RailClinicActivity[]) {
