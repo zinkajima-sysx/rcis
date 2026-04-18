@@ -11,15 +11,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { medicalEquipments } from "@/lib/rci-data";
+import { getEquipmentCategories, getMedicalEquipments } from "@/lib/rci-data";
 import { getDashboardMetrics } from "@/lib/rci-utils";
 
 export const metadata: Metadata = {
   title: "Inventaris Alkes",
 };
 
-export default function InventoryPage() {
-  const metrics = getDashboardMetrics();
+export default async function InventoryPage() {
+  const medicalEquipments = await getMedicalEquipments();
+  const equipmentCategories = await getEquipmentCategories();
+  const metrics = getDashboardMetrics(medicalEquipments);
 
   return (
     <div className="flex flex-col gap-6">
@@ -56,7 +58,10 @@ export default function InventoryPage() {
         </CardContent>
       </Card>
 
-      <InventoryExplorer />
+      <InventoryExplorer
+        medicalEquipments={medicalEquipments}
+        equipmentCategories={equipmentCategories}
+      />
     </div>
   );
 }

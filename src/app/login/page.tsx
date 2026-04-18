@@ -28,23 +28,23 @@ import {
   FieldLegend,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { appUsers } from "@/lib/rci-data";
+import { mockAppUsers } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [isPending, startTransition] = useTransition();
-  const [username, setUsername] = useState(appUsers[0]?.username ?? "");
+  const [username, setUsername] = useState(mockAppUsers[0]?.username ?? "");
   const [password, setPassword] = useState("railclinic123");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    startTransition(() => {
-      const result = login({ username, password });
+    startTransition(async () => {
+      const result = await login({ username, password });
 
       if (!result.ok) {
         setErrorMessage(result.message);
@@ -165,7 +165,7 @@ export default function LoginPage() {
               <div className="mt-5 rounded-xl bg-slate-50 p-3 text-left text-xs text-slate-500">
                 <div className="font-medium text-slate-700">Akun demo</div>
                 <div className="mt-2 flex flex-col gap-1.5">
-                  {appUsers.map((user) => (
+                  {mockAppUsers.map((user) => (
                     <button
                       key={user.id}
                       type="button"

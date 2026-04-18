@@ -1,10 +1,10 @@
-import {
-  referenceDate,
-  type MedicalEquipment,
-  type EnhancedMedicalEquipment,
-  type UserRole,
-  type EquipmentCategory,
-  type RailClinicActivity,
+import { referenceDate } from "./constants";
+import type {
+  MedicalEquipment,
+  EnhancedMedicalEquipment,
+  UserRole,
+  EquipmentCategory,
+  RailClinicActivity,
 } from "@/lib/rci-data";
 
 export type CalibrationTone = "safe" | "warning" | "danger";
@@ -93,20 +93,35 @@ export function getInventorySummary(equipment: MedicalEquipment[]) {
     perbaikan,
     rusak,
     alerts,
+    butuhTindakan: alerts,
   };
 }
 
 export function getGallerySummary(activities: RailClinicActivity[]) {
-  const total = activities.length;
+  const totalActivities = activities.length;
   const totalPhotos = activities.reduce((sum, activity) => sum + activity.fotos.length, 0);
+  const coverage = new Set(activities.map((activity) => activity.wilayahDaop)).size;
 
-  return {
-    totalActivities: total,
-    totalPhotos,
-  };
+  return [
+    {
+      id: "activities" as const,
+      label: "Total kegiatan",
+      value: totalActivities,
+    },
+    {
+      id: "coverage" as const,
+      label: "Wilayah tercover",
+      value: coverage,
+    },
+    {
+      id: "visitors" as const,
+      label: "Total foto",
+      value: totalPhotos,
+    },
+  ];
 }
 
-export function getDashboardMetrics(equipment: EnhancedMedicalEquipment[]) {
+export function getDashboardMetrics(equipment: MedicalEquipment[]) {
   const total = equipment.length;
   const layak = equipment.filter(
     (item) => item.statusKelayakan === "Layak Pakai"
@@ -146,16 +161,22 @@ export function getDashboardMetrics(equipment: EnhancedMedicalEquipment[]) {
 export function getCalibrationAlerts(equipment: EnhancedMedicalEquipment[]) {
   return equipment
     .filter((item) => item.calibrationTone !== "safe")
-    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime());
+    .sort((a, b) =>
+      new Date(a.tglRencanaKalibrasi).getTime() -
+      new Date(b.tglRencanaKalibrasi).getTime()
+    );
 }
 
 export function getUpcomingSchedule(equipment: EnhancedMedicalEquipment[]) {
   return equipment
     .filter((item) => item.calibrationTone !== "safe")
-    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime());
+    .sort((a, b) =>
+      new Date(a.tglRencanaKalibrasi).getTime() -
+      new Date(b.tglRencanaKalibrasi).getTime()
+    );
 }
 
-export function getCategoryTotals(equipment: EnhancedMedicalEquipment[], categories: EquipmentCategory[]) {
+export function getCategoryTotals(equipment: MedicalEquipment[], categories: EquipmentCategory[]) {
   return categories.map(cat => {
     const total = equipment.filter(item => item.kategoriId === cat.id).length;
     const layak = equipment.filter(item => item.kategoriId === cat.id && item.statusKelayakan === "Layak Pakai").length;

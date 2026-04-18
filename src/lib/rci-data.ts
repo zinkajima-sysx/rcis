@@ -75,7 +75,7 @@ export type HandoverRecord = {
   namaPenyerah: string;
   nippPenerima: string;
   namaPenerima: string;
-  fotos: [HandoverPhoto, HandoverPhoto];
+  fotos: HandoverPhoto[];
 };
 
 // IMPORTS - After types are defined
@@ -83,7 +83,7 @@ import { db } from '../db';
 import * as schema from '../db/schema';
 import { eq } from 'drizzle-orm';
 
-export const referenceDate = "2026-04-18";
+import { referenceDate } from "./constants";
 
 // MOCK DATA - For seed script reference only
 export const mockAppUsers: AppUser[] = [
@@ -197,8 +197,31 @@ export async function getRailClinicActivities() {
 
 export async function getHandoverRecords() {
   const records = await db.select().from(schema.handovers);
-  return await Promise.all(records.map(async (ho) => {
-    const photos = await db.select().from(schema.handoverPhotos).where(eq(schema.handoverPhotos.handoverId, ho.id));
-    return { ...ho, fotos: photos };
-  }));
+
+  return await Promise.all(
+    records.map(async (handover) => {
+      const photos = await db
+        .select()
+        .from(schema.handoverPhotos)
+        .where(eq(schema.handoverPhotos.handoverId, handover.id));
+
+      return {
+        id: handover.id,
+        kegiatanAsal: handover.sourceActivityId ?? "",
+        kegiatanTujuan: handover.targetActivityId ?? "",
+        tanggalSerahTerima: handover.handoverDate?.toISOString().split("T")[0] || "",
+        nippPenyerah: handover.senderNipp || "",
+        namaPenyerah: handover.senderName || "",
+        nippPenerima: handover.receiverNipp || "",
+        namaPenerima: handover.receiverName || "",
+        fotos: photos.map((photo) => ({
+          id: photo.id,
+          judul: photo.title || "",
+          fokus: photo.focus || "",
+          tone: (photo.tone as PhotoTone) || "ocean",
+          imageUrl: photo.imageUrl || "",
+        })),
+      };
+    })
+  );
 }

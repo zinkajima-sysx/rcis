@@ -51,11 +51,7 @@ import {
   TABLE_PAGE_SIZE_OPTIONS,
   paginateItems,
 } from "@/lib/pagination";
-import {
-  equipmentCategories,
-  medicalEquipments,
-  type MedicalEquipment,
-} from "@/lib/rci-data";
+import { type EquipmentCategory, type MedicalEquipment } from "@/lib/rci-data";
 import {
   formatDateLong,
   getCalibrationTone,
@@ -67,7 +63,15 @@ type StatusFilter = MedicalEquipment["statusKelayakan"] | "all";
 type CategoryFilter = MedicalEquipment["kategoriId"] | "all";
 type ViewMode = "table" | "cards";
 
-export function InventoryExplorer() {
+type InventoryExplorerProps = {
+  medicalEquipments: MedicalEquipment[];
+  equipmentCategories: EquipmentCategory[];
+};
+
+export function InventoryExplorer({
+  medicalEquipments,
+  equipmentCategories,
+}: InventoryExplorerProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");

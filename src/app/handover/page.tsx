@@ -10,34 +10,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { handoverRecords } from "@/lib/rci-data";
+import { getHandoverRecords } from "@/lib/rci-data";
 
 export const metadata: Metadata = {
   title: "Handover",
 };
 
-const handoverSummary = [
-  {
-    id: "records",
-    label: "Total handover",
-    value: handoverRecords.length,
-    icon: Repeat2Icon,
-  },
-  {
-    id: "photos",
-    label: "Foto handover",
-    value: handoverRecords.length,
-    icon: FileImageIcon,
-  },
-  {
-    id: "checklists",
-    label: "Foto checklist",
-    value: handoverRecords.length,
-    icon: ClipboardCheckIcon,
-  },
-];
+export default async function HandoverPage() {
+  const handoverRecords = await getHandoverRecords();
 
-export default function HandoverPage() {
+  const handoverSummary = [
+    {
+      id: "records",
+      label: "Total handover",
+      value: handoverRecords.length,
+      icon: Repeat2Icon,
+    },
+    {
+      id: "photos",
+      label: "Foto handover",
+      value: handoverRecords.length,
+      icon: FileImageIcon,
+    },
+    {
+      id: "checklists",
+      label: "Foto checklist",
+      value: handoverRecords.length,
+      icon: ClipboardCheckIcon,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-6">
       <Card className="surface-panel border-white/70 shadow-lg shadow-primary/5">

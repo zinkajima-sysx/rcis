@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { railClinicActivities } from "@/lib/rci-data";
+import { getRailClinicActivities } from "@/lib/rci-data";
 import { getGallerySummary } from "@/lib/rci-utils";
 
 export const metadata: Metadata = {
@@ -23,8 +23,9 @@ const galleryIcons = {
   visitors: UsersIcon,
 };
 
-export default function GalleryPage() {
-  const summary = getGallerySummary();
+export default async function GalleryPage() {
+  const activities = await getRailClinicActivities();
+  const summary = getGallerySummary(activities);
 
   return (
     <div className="flex flex-col gap-6">
@@ -66,7 +67,7 @@ export default function GalleryPage() {
         </CardContent>
       </Card>
 
-      <GalleryCollection activities={railClinicActivities} />
+      <GalleryCollection activities={activities} />
     </div>
   );
 }
