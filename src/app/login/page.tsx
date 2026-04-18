@@ -28,15 +28,14 @@ import {
   FieldLegend,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { mockAppUsers } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [isPending, startTransition] = useTransition();
-  const [username, setUsername] = useState(mockAppUsers[0]?.username ?? "");
-  const [password, setPassword] = useState("railclinic123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -160,29 +159,6 @@ export default function LoginPage() {
                 <ArrowRightIcon data-icon="inline-end" />
               </Button>
             </form>
-
-            {process.env.NODE_ENV === "development" && (
-              <div className="mt-5 rounded-xl bg-slate-50 p-3 text-left text-xs text-slate-500">
-                <div className="font-medium text-slate-700">Akun demo</div>
-                <div className="mt-2 flex flex-col gap-1.5">
-                  {mockAppUsers.map((user) => (
-                    <button
-                      key={user.id}
-                      type="button"
-                      className="text-left transition-colors hover:text-slate-700"
-                      onClick={() => {
-                        setUsername(user.username);
-                        setPassword(user.password);
-                        setErrorMessage("");
-                      }}
-                    >
-                      {user.username}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="mt-8 pt-2 text-center text-[13px] text-slate-500">
               {"\u00A9"} 2026 PT Kereta Api Indonesia (Persero). All rights reserved.
             </div>

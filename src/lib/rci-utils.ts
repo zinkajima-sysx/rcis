@@ -28,15 +28,35 @@ export function formatDateLong(value: string) {
 }
 
 export function formatRoleLabel(role: UserRole) {
+  if (role === "super_admin") {
+    return "Superadmin";
+  }
+
+  if (role === "admin" || role === "admin_entity") {
+    return "Admin";
+  }
+
   if (role === "petugas_medis") {
     return "Petugas Medis";
+  }
+
+  if (role === "manager_unit_kesehatan") {
+    return "Manager Unit Kesehatan";
+  }
+
+  if (role === "assman") {
+    return "Assman";
+  }
+
+  if (role === "guest") {
+    return "Guest";
   }
 
   if (role === "manajemen") {
     return "Manajemen";
   }
 
-  return "Admin";
+  return role;
 }
 
 export function getDaysUntilCalibration(date: string) {

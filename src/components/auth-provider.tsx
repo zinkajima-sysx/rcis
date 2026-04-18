@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useEffect,
   startTransition,
   useContext,
   useState,
@@ -15,7 +16,15 @@ const SESSION_STORAGE_KEY = "rci-session";
 
 type AuthSession = Pick<
   AppUser,
-  "id" | "username" | "namaLengkap" | "role" | "unit"
+  | "id"
+  | "username"
+  | "namaLengkap"
+  | "role"
+  | "unit"
+  | "entityId"
+  | "entityName"
+  | "accessValidFrom"
+  | "accessValidUntil"
 >;
 
 type LoginInput = {
@@ -32,6 +41,30 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function isSessionOutsideAccessWindow(session: AuthSession | null) {
+  if (!session) {
+    return false;
+  }
+
+  const now = Date.now();
+
+  if (session.accessValidFrom) {
+    const validFrom = new Date(session.accessValidFrom).getTime();
+    if (!Number.isNaN(validFrom) && validFrom > now) {
+      return true;
+    }
+  }
+
+  if (session.accessValidUntil) {
+    const validUntil = new Date(session.accessValidUntil).getTime();
+    if (!Number.isNaN(validUntil) && validUntil < now) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function readStoredSession() {
   if (typeof window === "undefined") {
     return null;
@@ -44,7 +77,14 @@ function readStoredSession() {
   }
 
   try {
-    return JSON.parse(rawSession) as AuthSession;
+    const parsedSession = JSON.parse(rawSession) as AuthSession;
+
+    if (isSessionOutsideAccessWindow(parsedSession)) {
+      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+      return null;
+    }
+
+    return parsedSession;
   } catch {
     window.localStorage.removeItem(SESSION_STORAGE_KEY);
     return null;
@@ -82,6 +122,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.removeItem(SESSION_STORAGE_KEY);
     startTransition(() => setSession(null));
   };
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    if (isSessionOutsideAccessWindow(session)) {
+      logout();
+      return;
+    }
+
+    if (!session.accessValidUntil) {
+      return;
+    }
+
+    const validUntilTime = new Date(session.accessValidUntil).getTime();
+    if (Number.isNaN(validUntilTime)) {
+      return;
+    }
+
+    const timeoutMs = validUntilTime - Date.now() + 1000;
+    if (timeoutMs <= 0) {
+      logout();
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      logout();
+    }, timeoutMs);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [session]);
 
   return (
     <AuthContext.Provider value={{ isReady, session, login, logout }}>

@@ -31,6 +31,7 @@ import {
   getCalibrationAlerts,
   getCategoryTotals,
   getDashboardMetrics,
+  getInventorySummary,
   getUpcomingSchedule,
   getTotalActivities,
   getRecentActivities,
@@ -48,35 +49,35 @@ const iconMap = {
 const metricCardStyles = {
   total: {
     card:
-      "border-[#cfe0ff] bg-[linear-gradient(180deg,#ffffff_0%,#f4f8ff_100%)] shadow-[0_14px_28px_rgba(37,99,235,0.10)]",
-    icon: "bg-[#e8f0ff] text-[#2454c5]",
-    value: "text-[#173b99]",
-    badge: "bg-[#edf4ff] text-[#2454c5]",
-    accent: "bg-[#2454c5]",
+      "border-primary/20 bg-[linear-gradient(180deg,#ffffff_0%,#f0f4fa_100%)] shadow-[0_14px_28px_rgba(0,51,102,0.08)]",
+    icon: "bg-primary/10 text-primary",
+    value: "text-primary",
+    badge: "bg-primary/5 text-primary",
+    accent: "bg-primary",
   },
   ready: {
     card:
-      "border-[#cdebd4] bg-[linear-gradient(180deg,#ffffff_0%,#f3fcf5_100%)] shadow-[0_14px_28px_rgba(34,139,78,0.10)]",
-    icon: "bg-[#e7f8eb] text-[#228b4e]",
-    value: "text-[#17663a]",
-    badge: "bg-[#ebf9ef] text-[#228b4e]",
-    accent: "bg-[#228b4e]",
+      "border-emerald-200 bg-[linear-gradient(180deg,#ffffff_0%,#f0fdf4_100%)] shadow-[0_14px_28px_rgba(16,185,129,0.08)]",
+    icon: "bg-emerald-100 text-emerald-600",
+    value: "text-emerald-700",
+    badge: "bg-emerald-50 text-emerald-600",
+    accent: "bg-emerald-500",
   },
   alerts: {
     card:
-      "border-[#f3d6bb] bg-[linear-gradient(180deg,#ffffff_0%,#fff7ef_100%)] shadow-[0_14px_28px_rgba(234,119,35,0.12)]",
-    icon: "bg-[#fff0e1] text-[#d26b19]",
-    value: "text-[#a95516]",
-    badge: "bg-[#fff3e8] text-[#d26b19]",
-    accent: "bg-[#d26b19]",
+      "border-accent/20 bg-[linear-gradient(180deg,#ffffff_0%,#fffaf0_100%)] shadow-[0_14px_28px_rgba(255,130,0,0.1)]",
+    icon: "bg-accent/10 text-accent",
+    value: "text-accent",
+    badge: "bg-accent/5 text-accent",
+    accent: "bg-accent",
   },
   activities: {
     card:
-      "border-[#ddd8fb] bg-[linear-gradient(180deg,#ffffff_0%,#f7f5ff_100%)] shadow-[0_14px_28px_rgba(109,76,217,0.10)]",
-    icon: "bg-[#f0ebff] text-[#6d4cd9]",
-    value: "text-[#5133ba]",
-    badge: "bg-[#f3efff] text-[#6d4cd9]",
-    accent: "bg-[#6d4cd9]",
+      "border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] shadow-[0_14px_28px_rgba(71,85,105,0.08)]",
+    icon: "bg-slate-100 text-slate-600",
+    value: "text-slate-700",
+    badge: "bg-slate-50 text-slate-600",
+    accent: "bg-slate-500",
   },
 } as const;
 
@@ -86,359 +87,240 @@ export default async function Home() {
   const activities = await getRailClinicActivities();
 
   const enhancedEquipment = enhanceEquipmentWithCalibration(allEquipment);
+  const summary = getInventorySummary(allEquipment);
+  
+  const metrics = [
+    {
+      id: "total" as const,
+      label: "Total Alkes",
+      value: summary.total,
+      helper: "Seluruh aset kesehatan yang terdata pada sistem.",
+    },
+    {
+      id: "ready" as const,
+      label: "Layak Pakai",
+      value: summary.layak,
+      helper: "Alat dalam status siap dipakai untuk pelayanan.",
+    },
+    {
+      id: "alerts" as const,
+      label: "Butuh Perbaikan",
+      value: summary.perbaikan,
+      helper: "Alat yang membutuhkan perbaikan teknis.",
+    },
+    {
+      id: "activities" as const,
+      label: "Rusak / Tidak Layak",
+      value: summary.rusak,
+      helper: "Alat yang sudah tidak dapat digunakan.",
+    },
+  ];
 
-  const metrics = getDashboardMetrics(enhancedEquipment);
   const alerts = getCalibrationAlerts(enhancedEquipment).slice(0, 4);
-  const schedule = getUpcomingSchedule(enhancedEquipment).slice(0, 6);
-  const categoryTotals = getCategoryTotals(enhancedEquipment, categories);
+  const categoryTotals = getCategoryTotals(allEquipment, categories);
   const previewActivities = getRecentActivities(activities);
 
-  const elektromedisCount =
-    categoryTotals.find((item) => item.id === "alkes-elektromedis")?.total ?? 0;
-  const nonElektromedisCount =
-    categoryTotals.find((item) => item.id === "alkes-non-elektromedis")?.total ?? 0;
-  const perlengkapanPendukungCount =
-    categoryTotals.find((item) => item.id === "perlengkapan-pendukung")?.total ?? 0;
-
-  // Update activity count in metrics
-  metrics[3].value = getTotalActivities(activities);
+  // Filter activities for ongoing/upcoming (simplified for this demo)
+  const ongoingActivities = activities.filter(a => new Date(a.tanggalKegiatan) <= new Date() && new Date(a.tanggalKegiatan) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  const upcomingActivities = activities.filter(a => new Date(a.tanggalKegiatan) > new Date()).slice(0, 2);
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card className="surface-panel border-white/70 shadow-lg shadow-primary/5">
-        <CardHeader className="gap-4 lg:grid-cols-[1.4fr_auto]">
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-2">
-              <CardTitle className="text-3xl">Dashboard</CardTitle>
-              <CardDescription>Ringkasan inventaris dan kalibrasi.</CardDescription>
-            </div>
+    <div className="flex flex-col gap-8">
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl font-bold tracking-tight text-primary">Dashboard RCIS</h1>
+            <p className="text-muted-foreground">Rail Clinic Inventory System - Snapshot Operasional</p>
           </div>
-          <CardAction className="col-start-auto row-start-auto">
-            <div className="flex flex-col gap-2 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm sm:min-w-72">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-muted-foreground">
-                  Snapshot operasional
-                </span>
-                <Badge variant="secondary">18 Apr 2026</Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-xl bg-secondary/60 p-3">
-                  <div className="font-mono text-lg font-semibold">
-                    {metrics[2].value}
-                  </div>
-                  <div className="text-muted-foreground">
-                    alat butuh perhatian
-                  </div>
-                </div>
-                <div className="rounded-xl bg-accent/20 p-3">
-                  <div className="font-mono text-lg font-semibold">
-                    {previewActivities.length * 2}
-                  </div>
-                  <div className="text-muted-foreground">foto kegiatan siap</div>
-                </div>
-              </div>
-            </div>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/inventory"
-              className={cn(buttonVariants({ size: "lg" }), "sm:w-fit")}
-            >
-              <PackageCheckIcon data-icon="inline-start" />
-              Buka inventaris alkes
-            </Link>
-            <Link
-              href="/gallery"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "sm:w-fit"
-              )}
-            >
-              <FolderOpenIcon data-icon="inline-start" />
-              Lihat galeri kegiatan
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+          <Badge variant="outline" className="px-4 py-1.5 text-sm font-medium border-primary/20 bg-primary/5 text-primary">
+            {formatDateLong("2026-04-19")}
+          </Badge>
+        </div>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => {
-          const Icon = iconMap[metric.id];
-          const styles = metricCardStyles[metric.id];
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {metrics.map((metric) => {
+            const Icon = iconMap[metric.id];
+            const styles = metricCardStyles[metric.id];
 
-          return (
-            <Card
-              key={metric.id}
-              size="sm"
-              className={cn(
-                "relative overflow-hidden border shadow-none transition-transform duration-200 hover:-translate-y-0.5",
-                styles.card
-              )}
-            >
-              <div className={cn("absolute inset-x-0 top-0 h-1.5", styles.accent)} />
-              <CardHeader className="gap-3 pb-1">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.14em] uppercase",
-                      styles.badge
-                    )}
-                  >
-                    KPI
-                  </span>
-                </div>
-                <CardDescription className="text-[13px] font-medium tracking-[0.02em] text-slate-600">
-                  {metric.label}
-                </CardDescription>
-                <CardAction>
-                  <div
-                    className={cn(
-                      "flex size-11 items-center justify-center rounded-2xl shadow-sm",
-                      styles.icon
-                    )}
-                  >
-                    <Icon />
-                  </div>
-                </CardAction>
-                <CardTitle className={cn("text-4xl font-semibold tracking-tight", styles.value)}>
-                  {metric.value}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="rounded-2xl border border-black/5 bg-white/75 px-3.5 py-3 text-[13px] leading-6 text-slate-600">
-                  {metric.helper}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </section>
-
-      <section>
-        <Card
-          size="sm"
-          className="relative overflow-hidden border border-[#d5def4] bg-[linear-gradient(180deg,#ffffff_0%,#f6f9ff_100%)] shadow-[0_14px_28px_rgba(31,64,140,0.10)]"
-        >
-          <div className="absolute inset-x-0 top-0 h-1.5 bg-[#1f4aa1]" />
-          <CardHeader className="gap-3 pb-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex rounded-full bg-[#eaf1ff] px-2.5 py-1 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1f4aa1]">
-                KPI
-              </span>
-            </div>
-            <CardDescription className="text-[13px] font-medium tracking-[0.02em] text-slate-600">
-              Detail Alkes
-            </CardDescription>
-            <CardTitle className="text-3xl font-semibold tracking-tight text-[#173b99]">
-              Ringkasan kategori alat
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid gap-3 md:grid-cols-3">
-              <div className="rounded-2xl border border-[#dbe7ff] bg-white/85 px-4 py-3">
-                <div className="text-[13px] leading-6 text-slate-600">
-                  Alkes elektromedis
-                </div>
-                <div className="mt-1 font-mono text-2xl font-semibold text-[#1f4aa1]">
-                  {elektromedisCount}
-                </div>
-              </div>
-              <div className="rounded-2xl border border-[#dbe7ff] bg-white/85 px-4 py-3">
-                <div className="text-[13px] leading-6 text-slate-600">
-                  Alkes non elektromedis
-                </div>
-                <div className="mt-1 font-mono text-2xl font-semibold text-[#1f4aa1]">
-                  {nonElektromedisCount}
-                </div>
-              </div>
-              <div className="rounded-2xl border border-[#dbe7ff] bg-white/85 px-4 py-3">
-                <div className="text-[13px] leading-6 text-slate-600">
-                  Perlengkapan pendukung
-                </div>
-                <div className="mt-1 font-mono text-2xl font-semibold text-[#1f4aa1]">
-                  {perlengkapanPendukungCount}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-white/60 shadow-sm">
-          <CardHeader>
-            <CardTitle>Peringatan kalibrasi 30 hari</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            {alerts.map((alert) => (
-              <div
-                key={alert.id}
-                className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-background/80 p-4 sm:flex-row sm:items-start sm:justify-between"
+            return (
+              <Card
+                key={metric.id}
+                size="sm"
+                className={cn(
+                  "relative overflow-hidden border shadow-none transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1",
+                  styles.card
+                )}
               >
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="font-medium">{alert.namaAlat}</div>
-                    <StatusBadge status={alert.statusKelayakan} />
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {alert.merekTipe} •{" "}
-                    {
-                      categories.find(
-                        (category) => category.id === alert.kategoriId
-                      )?.nama
-                    }
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Rencana kalibrasi: {formatDateLong(alert.tglRencanaKalibrasi)}
-                  </div>
-                </div>
-                <Badge
-                  className={cn(
-                    "w-fit border-transparent",
-                    alert.calibrationTone === "danger"
-                      ? "status-danger"
-                      : "status-warning"
-                  )}
-                >
-                  {alert.calibrationLabel}
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-          <CardFooter>
-            <Link
-              href="/inventory"
-              className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
-            >
-              Tindak lanjuti inventaris
-              <ArrowRightIcon data-icon="inline-end" />
-            </Link>
-          </CardFooter>
-        </Card>
-
-        <Card className="border-white/60 shadow-sm">
-          <CardHeader>
-            <CardTitle>Komposisi status kelayakan</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {categoryTotals.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col gap-2 rounded-2xl bg-secondary/50 p-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="font-medium">{item.nama}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {item.total} alat tercatat
+                <div className={cn("absolute inset-x-0 top-0 h-1.5", styles.accent)} />
+                <CardHeader className="gap-3 pb-1">
+                  <div className="flex items-center justify-between">
+                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-[0.1em] uppercase", styles.badge)}>
+                      KAI RCIS
+                    </span>
+                    <div className={cn("flex size-10 items-center justify-center rounded-xl shadow-inner", styles.icon)}>
+                      <Icon className="size-5" />
                     </div>
                   </div>
-                  <div className="font-mono text-lg font-semibold text-primary">
-                    {item.total}
-                  </div>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <Badge className="status-safe border-transparent">
-                    {item.layak} layak
-                  </Badge>
-                  <Badge className="status-warning border-transparent">
-                    {item.perbaikan} perbaikan
-                  </Badge>
-                  <Badge className="status-danger border-transparent">
-                    {item.rusak} rusak
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+                  <CardDescription className="text-[13px] font-semibold text-slate-500 uppercase tracking-wide">
+                    {metric.label}
+                  </CardDescription>
+                  <CardTitle className={cn("text-4xl font-bold tracking-tighter", styles.value)}>
+                    {metric.value}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  <p className="text-[12px] leading-5 text-slate-500 italic">
+                    {metric.helper}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="border-white/60 shadow-sm">
-          <CardHeader>
-            <CardTitle>Agenda kalibrasi terdekat</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            {schedule.map((item) => (
-              <div
-                key={item.id}
-                className="grid gap-3 rounded-2xl border border-border/80 bg-background/80 p-4 sm:grid-cols-[1fr_auto]"
-              >
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">{item.namaAlat}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {item.merekTipe} • terakhir kalibrasi{" "}
-                    {formatDateLong(item.tglKalibrasiTerakhir)}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-2 px-2">
+            <ShieldAlertIcon className="size-5 text-accent" />
+            <h2 className="text-xl font-bold text-primary">Peringatan Kalibrasi</h2>
+          </div>
+          <Card className="border-accent/10 shadow-sm overflow-hidden bg-white/50">
+             <div className="bg-accent/5 px-4 py-2 border-b border-accent/10">
+                <span className="text-xs font-bold text-accent uppercase tracking-widest">Masa kalibrasi akan habis (30 hari)</span>
+             </div>
+             <CardContent className="p-4 flex flex-col gap-3">
+                {alerts.length > 0 ? alerts.map((alert) => (
+                  <div key={alert.id} className="flex items-center justify-between p-3 rounded-xl border border-accent/5 bg-white hover:border-accent/20 transition-colors">
+                    <div className="flex flex-col">
+                      <span className="font-bold text-slate-800">{alert.namaAlat}</span>
+                      <span className="text-xs text-slate-500">{alert.merekTipe}</span>
+                    </div>
+                    <Badge className={cn("border-none", alert.calibrationTone === "danger" ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700")}>
+                      {alert.calibrationLabel}
+                    </Badge>
                   </div>
-                </div>
-                <div className="flex flex-col items-start gap-2 sm:items-end">
-                  <Badge
-                    className={cn(
-                      "border-transparent",
-                      item.calibrationTone === "danger"
-                        ? "status-danger"
-                        : item.calibrationTone === "warning"
-                          ? "status-warning"
-                          : "status-safe"
-                    )}
-                  >
-                    <CalendarClockIcon data-icon="inline-start" />
-                    {item.calibrationLabel}
-                  </Badge>
-                  <span className="font-mono text-sm text-muted-foreground">
-                    {formatDateLong(item.tglRencanaKalibrasi)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+                )) : (
+                  <div className="py-8 text-center text-muted-foreground text-sm uppercase italic tracking-widest">Semua alat terkalibrasi aman</div>
+                )}
+             </CardContent>
+             {alerts.length > 0 && (
+               <CardFooter className="p-4 pt-0">
+                  <Link href="/inventory" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full border-accent/20 text-accent hover:bg-accent/5")}>
+                    Lihat Inventaris Lengkap
+                  </Link>
+               </CardFooter>
+             )}
+          </Card>
+        </section>
 
-        <Card className="border-white/60 shadow-sm">
-          <CardHeader>
-            <CardTitle>Preview galeri kegiatan</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            {previewActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-background/80 p-4"
-              >
-                <div className="flex flex-col gap-1">
-                  <div className="font-medium">{activity.namaKegiatan}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {activity.lokasiStasiun}, {activity.wilayahDaop} •{" "}
-                    {formatDateLong(activity.tanggalKegiatan)}
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-2 px-2">
+            <ActivityIcon className="size-5 text-primary" />
+            <h2 className="text-xl font-bold text-primary">Status Per Kategori</h2>
+          </div>
+          <Card className="border-primary/10 shadow-sm bg-white/50 overflow-hidden">
+            <div className="bg-primary/5 px-4 py-2 border-b border-primary/10">
+                <span className="text-xs font-bold text-primary uppercase tracking-widest">Komposisi Inventaris Alkes</span>
+             </div>
+            <CardContent className="p-4 flex flex-col gap-4">
+              {categoryTotals.map((item) => (
+                <div key={item.id} className="flex flex-col gap-3 p-4 rounded-2xl bg-white border border-primary/5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-primary">{item.nama}</span>
+                    <span className="text-lg font-black text-primary/40">{item.total}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center p-2 rounded-lg bg-emerald-50 text-emerald-700">
+                      <span className="text-[10px] font-bold uppercase tracking-tighter opacity-70">Layak</span>
+                      <span className="text-sm font-bold">{item.layak}</span>
+                    </div>
+                    <div className="flex flex-col items-center p-2 rounded-lg bg-orange-50 text-orange-700">
+                      <span className="text-[10px] font-bold uppercase tracking-tighter opacity-70">Perbaikan</span>
+                      <span className="text-sm font-bold">{item.perbaikan}</span>
+                    </div>
+                    <div className="flex flex-col items-center p-2 rounded-lg bg-red-50 text-red-700">
+                      <span className="text-[10px] font-bold uppercase tracking-tighter opacity-70">Rusak</span>
+                      <span className="text-sm font-bold">{item.rusak}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {activity.fotos.map((photo: { id: string; judul: string; fokus: string; tone: "ocean" | "ember" | "meadow" | "dusk"; imageUrl: string }) => (
-                    <PhotoTile
-                      key={photo.id}
-                      title={photo.judul}
-                      subtitle={photo.fokus}
-                      tone={photo.tone}
-                      imageUrl={photo.imageUrl}
-                      badgeLabel="Foto kegiatan"
-                    />
-                  ))}
+              ))}
+            </CardContent>
+          </Card>
+        </section>
+      </div>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2 px-2">
+            <CalendarClockIcon className="size-5 text-primary" />
+            <h2 className="text-xl font-bold text-primary">Jadwal Sedang Berlangsung</h2>
+          </div>
+          {ongoingActivities.length > 0 ? ongoingActivities.map(activity => (
+            <Card key={activity.id} className="border-primary/10 shadow-sm border-l-4 border-l-primary">
+              <CardHeader className="p-4 pb-2">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-lg">{activity.namaKegiatan}</CardTitle>
+                  <Badge className="bg-primary/10 text-primary border-none">Ongoing</Badge>
                 </div>
-              </div>
-            ))}
-          </CardContent>
-          <CardFooter>
-            <Link
-              href="/gallery"
-              className={cn(buttonVariants({ variant: "outline" }), "ml-auto")}
-            >
-              Buka galeri lengkap
-              <ArrowRightIcon data-icon="inline-end" />
-            </Link>
-          </CardFooter>
-        </Card>
+                <CardDescription>{activity.lokasiStasiun}, {activity.wilayahDaop}</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm text-muted-foreground line-clamp-2">{activity.deskripsi}</p>
+              </CardContent>
+            </Card>
+          )) : (
+            <div className="p-8 rounded-3xl border border-dashed border-primary/20 bg-primary/5 text-center text-sm text-primary/50 font-medium italic">Tidak ada kegiatan yang sedang berlangsung</div>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2 px-2">
+            <ArrowRightIcon className="size-5 text-accent" />
+            <h2 className="text-xl font-bold text-primary">Jadwal Akan Datang</h2>
+          </div>
+          {upcomingActivities.length > 0 ? upcomingActivities.map(activity => (
+            <Card key={activity.id} className="border-accent/10 shadow-sm border-l-4 border-l-accent opacity-90 grayscale-[0.2]">
+              <CardHeader className="p-4 pb-2">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-lg">{activity.namaKegiatan}</CardTitle>
+                  <span className="text-xs font-bold text-accent">{formatDateLong(activity.tanggalKegiatan)}</span>
+                </div>
+                <CardDescription>{activity.lokasiStasiun}, {activity.wilayahDaop}</CardDescription>
+              </CardHeader>
+            </Card>
+          )) : (
+            <div className="p-8 rounded-3xl border border-dashed border-accent/20 bg-accent/5 text-center text-sm text-accent/50 font-medium italic">Tidak ada agenda kegiatan mendatang</div>
+          )}
+        </div>
+      </section>
+      
+      <section className="flex flex-col gap-4 pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-xl font-bold text-primary">Preview Dokumentasi Baru</h2>
+          <Link href="/gallery" className="text-sm font-bold text-accent flex items-center gap-1 hover:underline">
+            Buka Galeri <ArrowRightIcon className="size-4" />
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {previewActivities.map((activity) => (
+             <Card key={activity.id} className="overflow-hidden border-none shadow-md group">
+                <div className="grid grid-cols-2 h-48 sm:h-64">
+                   {activity.fotos.slice(0, 2).map((photo: any) => (
+                      <div key={photo.id} className="relative overflow-hidden">
+                        <img src={photo.imageUrl} alt={photo.judul} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <div className="absolute inset-0 bg-black/20" />
+                      </div>
+                   ))}
+                </div>
+                <div className="p-4 bg-white">
+                   <h3 className="font-bold text-slate-800">{activity.namaKegiatan}</h3>
+                   <p className="text-xs text-slate-500">{activity.lokasiStasiun} &bull; {formatDateLong(activity.tanggalKegiatan)}</p>
+                </div>
+             </Card>
+          ))}
+        </div>
       </section>
     </div>
   );

@@ -1,6 +1,15 @@
 import { db } from './index';
 import * as schema from './schema';
-import { mockAppUsers } from '../lib/rci-data';
+
+const seedUsers = [
+  {
+    username: 'superadmin.rcis',
+    password: 'change-me-superadmin',
+    namaLengkap: 'Superadmin RCIS',
+    unit: 'Rail Clinic PT KAI',
+    roleCode: 'super_admin',
+  },
+];
 
 async function seed() {
   console.log('🚀 Starting seed process...');
@@ -41,7 +50,7 @@ async function seed() {
 
   // 3. Seed Users
   console.log('🌱 Seeding users...');
-  const userPromises = mockAppUsers.map(async (user) => {
+  const userPromises = seedUsers.map(async (user) => {
     return db.insert(schema.users).values({
       username: user.username,
       passwordHash: user.password,
@@ -55,8 +64,8 @@ async function seed() {
 
   // 4. Seed User-Entity-Roles
   console.log('🌱 Seeding user-entity-roles...');
-  const userRolePromises = insertedUsers.map(async (user) => {
-    const role = insertedRoles.find(r => r.code === (user.roleLegacy || 'petugas_medis'));
+  const userRolePromises = insertedUsers.map(async (user, index) => {
+    const role = insertedRoles.find(r => r.code === seedUsers[index]?.roleCode);
     return db.insert(schema.userEntityRoles).values({
       userId: user.id,
       entityId: mainEntity.id,

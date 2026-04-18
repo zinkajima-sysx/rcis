@@ -1,12 +1,42 @@
-export type UserRole = "petugas_medis" | "manajemen" | "admin";
+export type UserRole =
+  | "super_admin"
+  | "admin"
+  | "admin_entity"
+  | "petugas_medis"
+  | "manajemen"
+  | "manager_unit_kesehatan"
+  | "assman"
+  | "guest";
 
 export type AppUser = {
   id: string;
   username: string;
-  password: string;
+  password?: string;
   namaLengkap: string;
+  nipp?: string | null;
   role: UserRole;
   unit: string;
+  entityId?: string;
+  entityName?: string;
+  isActive: boolean;
+  accessValidFrom?: string | null;
+  accessValidUntil?: string | null;
+};
+
+export type Entity = {
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  parentId: string | null;
+  createdAt: string;
+};
+
+export type DaopDivre = {
+  id: string;
+  code: string;
+  name: string;
+  type: "daop" | "divre";
 };
 
 export type EquipmentCategory = {
@@ -26,6 +56,8 @@ export type ActivityPhoto = {
 
 export type MedicalEquipment = {
   id: string;
+  code?: string | null;
+  serialNumber?: string | null;
   kategoriId: EquipmentCategory["id"];
   namaAlat: string;
   merekTipe: string;
@@ -38,6 +70,12 @@ export type MedicalEquipment = {
   visualTone: PhotoTone;
   keteranganKalibrasi: string;
   imageUrl: string;
+  entityId?: string | null;
+  entityName?: string | null;
+  homeDaopDivreId?: string | null;
+  homeDaopName?: string | null;
+  currentDaopDivreId?: string | null;
+  currentDaopName?: string | null;
 };
 
 export type EnhancedMedicalEquipment = MedicalEquipment & {
@@ -47,12 +85,17 @@ export type EnhancedMedicalEquipment = MedicalEquipment & {
 
 export type RailClinicActivity = {
   id: string;
+  entityId: string;
+  daopDivreId: string;
+  kodeKegiatan: string;
   namaKegiatan: string;
   tanggalKegiatan: string;
+  tanggalSelesai?: string | null;
   lokasiStasiun: string;
   wilayahDaop: string;
   jumlahLayanan: number;
-  keterangan: string;
+  status: "draft" | "scheduled" | "in_progress" | "completed" | "cancelled";
+  deskripsi: string | null;
   fotos: ActivityPhoto[];
   createdBy: string;
 };

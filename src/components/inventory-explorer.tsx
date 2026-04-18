@@ -1,17 +1,24 @@
 "use client";
 
-import { startTransition, useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState, useTransition } from "react";
 import {
   CalendarClockIcon,
+  DownloadIcon,
   LayoutGridIcon,
+  PencilIcon,
+  PlusIcon,
   SearchIcon,
   TablePropertiesIcon,
+  TrashIcon,
 } from "lucide-react";
 
+import { EquipmentForm } from "@/components/equipment-form";
 import { PaginationControls } from "@/components/pagination-controls";
 import { PhotoTile } from "@/components/photo-tile";
 import { StatusBadge } from "@/components/status-badge";
+import { exportToExcel, exportToPDF } from "@/lib/export-utils";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -37,6 +44,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Table,
   TableBody,
   TableCell,
@@ -45,19 +59,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { deleteEquipmentAction } from "@/lib/equipment-actions";
 import {
   DEFAULT_CARD_PAGE_SIZE,
   DEFAULT_TABLE_ROWS,
   TABLE_PAGE_SIZE_OPTIONS,
   paginateItems,
 } from "@/lib/pagination";
-import { type EquipmentCategory, type MedicalEquipment } from "@/lib/types";
 import {
-  formatDateLong,
-  getCalibrationTone,
-  getDaysUntilCalibration,
-  getInventorySummary,
-} from "@/lib/rci-utils";
+  type DaopDivre,
+  type Entity,
+  type EquipmentCategory,
+  type MedicalEquipment,
+} from "@/lib/types";
 
 type StatusFilter = MedicalEquipment["statusKelayakan"] | "all";
 type CategoryFilter = MedicalEquipment["kategoriId"] | "all";
@@ -66,11 +80,21 @@ type ViewMode = "table" | "cards";
 type InventoryExplorerProps = {
   medicalEquipments: MedicalEquipment[];
   equipmentCategories: EquipmentCategory[];
+  entities: Entity[];
+  daopDivres: DaopDivre[];
 };
+import {
+  formatDateLong,
+  getCalibrationTone,
+  getDaysUntilCalibration,
+  getInventorySummary,
+} from "@/lib/rci-utils";
 
 export function InventoryExplorer({
   medicalEquipments,
   equipmentCategories,
+  entities,
+  daopDivres,
 }: InventoryExplorerProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -79,6 +103,12 @@ export function InventoryExplorer({
   const [tableRows, setTableRows] = useState(DEFAULT_TABLE_ROWS);
   const [tablePage, setTablePage] = useState(1);
   const [cardPage, setCardPage] = useState(1);
+  const [isPending, startTransition] = useTransition();
+
+  // CRUD State
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] =
+    useState<MedicalEquipment | null>(null);
 
   const deferredSearch = useDeferredValue(searchTerm.trim().toLowerCase());
 
@@ -95,7 +125,7 @@ export function InventoryExplorer({
 
       return matchesSearch && matchesStatus && matchesCategory;
     });
-  }, [categoryFilter, deferredSearch, statusFilter]);
+  }, [categoryFilter, deferredSearch, statusFilter, medicalEquipments]);
 
   const summary = getInventorySummary(filteredEquipments);
   const paginatedTable = useMemo(
@@ -112,8 +142,51 @@ export function InventoryExplorer({
     setCardPage(1);
   };
 
+  const openForm = (equipment: MedicalEquipment | null = null) => {
+    setSelectedEquipment(equipment);
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setSelectedEquipment(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
+      startTransition(async () => {
+        const result = await deleteEquipmentAction(id);
+        if (!result.success) {
+          alert("Gagal menghapus alat: " + result.message);
+        }
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
+      {/* Form Sheet */}
+      <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <SheetContent className="sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle>
+              {selectedEquipment ? "Edit Alat Kesehatan" : "Tambah Alat Baru"}
+            </SheetTitle>
+            <SheetDescription>
+              Lengkapi informasi detail alat kesehatan di bawah ini.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-6">
+            <EquipmentForm
+              equipment={selectedEquipment || undefined}
+              categories={equipmentCategories}
+              entities={entities}
+              daopDivres={daopDivres}
+              onSuccess={closeForm}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
       <Card className="border-white/60 shadow-sm">
         <CardHeader>
           <CardTitle>Filter inventaris</CardTitle>
@@ -230,9 +303,39 @@ export function InventoryExplorer({
         }
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <SearchIcon className="size-4" />
-            Menampilkan {filteredEquipments.length} item inventaris
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <SearchIcon className="size-4" />
+              Menampilkan {filteredEquipments.length} item inventaris
+            </div>
+            <Button
+              size="sm"
+              className="rounded-full shadow-md"
+              onClick={() => openForm(null)}
+            >
+              <PlusIcon data-icon="inline-start" />
+              Tambah Alat
+            </Button>
+            <div className="flex items-center gap-2 border-l pl-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                onClick={() => exportToExcel(filteredEquipments, equipmentCategories)}
+              >
+                <DownloadIcon data-icon="inline-start" />
+                Excel
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full"
+                onClick={() => exportToPDF(filteredEquipments, equipmentCategories)}
+              >
+                <DownloadIcon data-icon="inline-start" />
+                PDF
+              </Button>
+            </div>
           </div>
           <TabsList variant="line">
             <TabsTrigger value="table">
@@ -290,6 +393,7 @@ export function InventoryExplorer({
                     <TableHead>Kalibrasi terakhir</TableHead>
                     <TableHead>Rencana berikutnya</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -335,6 +439,26 @@ export function InventoryExplorer({
                         <TableCell>
                           <StatusBadge status={item.statusKelayakan} />
                         </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 text-muted-foreground hover:text-primary"
+                              onClick={() => openForm(item)}
+                            >
+                              <PencilIcon className="size-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 text-muted-foreground hover:text-destructive"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <TrashIcon className="size-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -372,16 +496,36 @@ export function InventoryExplorer({
                         imageUrl={item.imageUrl}
                         badgeLabel="Poto Alkes"
                       />
-                      <div className="flex flex-col gap-2">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <StatusBadge status={item.statusKelayakan} />
-                          <Badge variant="outline">{category?.nama}</Badge>
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <StatusBadge status={item.statusKelayakan} />
+                              <Badge variant="outline">{category?.nama}</Badge>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8"
+                                onClick={() => openForm(item)}
+                              >
+                                <PencilIcon className="size-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 text-destructive"
+                                onClick={() => handleDelete(item.id)}
+                              >
+                                <TrashIcon className="size-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="text-lg font-semibold">{item.namaAlat}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.merekTipe} • pengadaan {item.tahunPengadaan}
+                          </div>
                         </div>
-                        <div className="text-lg font-semibold">{item.namaAlat}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.merekTipe} • pengadaan {item.tahunPengadaan}
-                        </div>
-                      </div>
                       <div className="grid gap-3 rounded-2xl bg-secondary/50 p-4 sm:grid-cols-2">
                         <div>
                           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">

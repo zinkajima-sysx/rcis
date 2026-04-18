@@ -4,12 +4,16 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ActivitySquareIcon,
+  BuildingIcon,
+  CalendarIcon,
   FileTextIcon,
   FolderOpenIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   MenuIcon,
   PackageSearchIcon,
+  ShieldCheckIcon,
+  UsersIcon,
 } from "lucide-react";
 
 import { useAuth } from "@/components/auth-provider";
@@ -30,63 +34,115 @@ export const navigationItems = [
     href: "/",
     label: "Dashboard",
     icon: LayoutDashboardIcon,
-  },
-  {
-    href: "/inventory",
-    label: "Inventaris",
-    icon: PackageSearchIcon,
+    roles: ["petugas_medis", "manajemen", "admin", "super_admin"],
   },
   {
     href: "/gallery",
     label: "Galeri",
     icon: FolderOpenIcon,
+    roles: ["petugas_medis", "manajemen", "admin", "super_admin"],
+  },
+  {
+    href: "/inventory",
+    label: "Alkes",
+    icon: PackageSearchIcon,
+    roles: ["petugas_medis", "manajemen", "admin", "super_admin"],
   },
   {
     href: "/handover",
     label: "Handover",
     icon: FileTextIcon,
+    roles: ["petugas_medis", "manajemen", "admin", "super_admin"],
+  },
+  {
+    href: "/schedule",
+    label: "Jadwal RC",
+    icon: CalendarIcon,
+    roles: ["petugas_medis", "manajemen", "admin", "super_admin"],
+  },
+  {
+    href: "/users",
+    label: "User",
+    icon: UsersIcon,
+    category: "Data Master",
+    roles: ["admin", "super_admin"],
+  },
+  {
+    href: "/entities",
+    label: "Daop/Divre",
+    icon: BuildingIcon,
+    category: "Data Master",
+    roles: ["admin", "super_admin"],
+  },
+  {
+    href: "/entities/types",
+    label: "Entitas",
+    icon: ShieldCheckIcon,
+    category: "Data Master",
+    roles: ["admin", "super_admin"],
   },
 ];
 
 function NavigationLinks({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
+  const { session } = useAuth();
+
+  const allowedItems = navigationItems.filter(
+    (item) => session?.role && item.roles.includes(session.role)
+  );
+
+  const mainItems = allowedItems.filter((item) => !item.category);
+  const masterDataItems = allowedItems.filter(
+    (item) => item.category === "Data Master"
+  );
+
+  const renderItem = (item: (typeof navigationItems)[0]) => {
+    const isActive = pathname === item.href;
+    const Icon = item.icon;
+
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        className={cn(
+          "group flex items-start gap-3 rounded-2xl border px-4 py-3 transition-colors",
+          isActive
+            ? "border-white/10 bg-white text-sidebar shadow-sm"
+            : "border-white/5 bg-white/0 text-sidebar-foreground/80 hover:bg-white/8 hover:text-sidebar-foreground",
+          compact && (isActive ? "bg-primary text-primary-foreground" : "bg-background text-foreground")
+        )}
+      >
+        <div
+          className={cn(
+            "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl transition-all duration-200",
+            isActive
+              ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+              : "bg-white/10 text-sidebar-foreground group-hover:bg-white/20",
+            compact && !isActive && "bg-secondary text-primary",
+            compact && isActive && "bg-white/20 text-white"
+          )}
+        >
+          <Icon className="size-5" />
+        </div>
+        <div className="flex min-w-0 flex-col justify-center py-1.5">
+          <span className="font-medium">{item.label}</span>
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <nav className="flex flex-col gap-2">
-      {navigationItems.map((item) => {
-        const isActive = pathname === item.href;
-        const Icon = item.icon;
+      <div className="flex flex-col gap-1.5">{mainItems.map(renderItem)}</div>
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "group flex items-start gap-3 rounded-2xl border px-4 py-3 transition-colors",
-              isActive
-                ? "border-white/10 bg-white text-sidebar"
-                : "border-white/5 bg-white/0 text-sidebar-foreground/80 hover:bg-white/8 hover:text-sidebar-foreground",
-              compact && "bg-background text-foreground"
-            )}
-          >
-            <div
-              className={cn(
-                "mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl",
-                isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "bg-white/10 text-sidebar-foreground",
-                compact && !isActive && "bg-secondary text-primary",
-                compact && isActive && "bg-primary text-primary-foreground"
-              )}
-            >
-              <Icon />
-            </div>
-            <div className="flex min-w-0 flex-col">
-              <span className="font-medium">{item.label}</span>
-            </div>
-          </Link>
-        );
-      })}
+      {masterDataItems.length > 0 && (
+        <div className="mt-4 flex flex-col gap-1.5">
+          <div className="px-4 pb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-sidebar-foreground/40">
+            Data Master
+          </div>
+          {masterDataItems.map(renderItem)}
+        </div>
+      )}
     </nav>
   );
 }
@@ -165,10 +221,15 @@ export function MobileNavigation() {
 
 export function HeaderNavigation() {
   const pathname = usePathname();
+  const { session } = useAuth();
+
+  const allowedItems = navigationItems.filter(item =>
+    session?.role && item.roles.includes(session.role)
+  );
 
   return (
     <nav className="flex flex-wrap gap-2">
-      {navigationItems.map((item) => {
+      {allowedItems.map((item) => {
         const isActive = pathname === item.href;
 
         return (

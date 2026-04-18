@@ -11,7 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getEquipmentCategories, getMedicalEquipments } from "@/lib/rci-data";
+import {
+  getDaopDivres,
+  getEntities,
+  getEquipmentCategories,
+  getMedicalEquipments,
+} from "@/lib/rci-data";
 import { getDashboardMetrics } from "@/lib/rci-utils";
 
 export const metadata: Metadata = {
@@ -21,6 +26,8 @@ export const metadata: Metadata = {
 export default async function InventoryPage() {
   const medicalEquipments = await getMedicalEquipments();
   const equipmentCategories = await getEquipmentCategories();
+  const entities = await getEntities();
+  const daopDivres = await getDaopDivres();
   const metrics = getDashboardMetrics(medicalEquipments);
 
   return (
@@ -51,17 +58,16 @@ export default async function InventoryPage() {
               </div>
             ))}
           </div>
-          <Button variant="outline">
-            <DownloadIcon data-icon="inline-start" />
-            Ekspor
-          </Button>
         </CardContent>
       </Card>
 
       <InventoryExplorer
         medicalEquipments={medicalEquipments}
         equipmentCategories={equipmentCategories}
+        entities={entities}
+        daopDivres={daopDivres}
       />
     </div>
   );
 }
+

@@ -10,7 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getRailClinicActivities } from "@/lib/rci-data";
+import {
+  getDaopDivres,
+  getEntities,
+  getRailClinicActivities,
+} from "@/lib/rci-data";
 import { getGallerySummary } from "@/lib/rci-utils";
 
 export const metadata: Metadata = {
@@ -25,6 +29,8 @@ const galleryIcons = {
 
 export default async function GalleryPage() {
   const activities = await getRailClinicActivities();
+  const entities = await getEntities();
+  const daopDivres = await getDaopDivres();
   const summary = getGallerySummary(activities);
 
   return (
@@ -67,7 +73,11 @@ export default async function GalleryPage() {
         </CardContent>
       </Card>
 
-      <GalleryCollection activities={activities} />
+      <GalleryCollection
+        activities={activities}
+        entities={entities}
+        daopDivres={daopDivres}
+      />
     </div>
   );
 }
