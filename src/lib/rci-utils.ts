@@ -5,7 +5,7 @@ import type {
   UserRole,
   EquipmentCategory,
   RailClinicActivity,
-} from "@/lib/rci-data";
+} from "@/lib/types";
 
 export type CalibrationTone = "safe" | "warning" | "danger";
 

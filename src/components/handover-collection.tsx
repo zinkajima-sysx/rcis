@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DEFAULT_CARD_PAGE_SIZE, paginateItems } from "@/lib/pagination";
-import { type HandoverRecord } from "@/lib/rci-data";
+import { type HandoverRecord } from "@/lib/types";
 import { formatDateLong } from "@/lib/rci-utils";
 
 type HandoverCollectionProps = {

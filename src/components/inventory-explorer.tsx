@@ -51,7 +51,7 @@ import {
   TABLE_PAGE_SIZE_OPTIONS,
   paginateItems,
 } from "@/lib/pagination";
-import { type EquipmentCategory, type MedicalEquipment } from "@/lib/rci-data";
+import { type EquipmentCategory, type MedicalEquipment } from "@/lib/types";
 import {
   formatDateLong,
   getCalibrationTone,

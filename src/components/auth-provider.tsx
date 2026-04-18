@@ -8,7 +8,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { type AppUser } from "@/lib/rci-data";
+import type { AppUser } from "@/lib/types";
 import { loginAction } from "@/lib/auth-actions";
 
 const SESSION_STORAGE_KEY = "rci-session";

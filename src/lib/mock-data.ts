@@ -1,4 +1,4 @@
-import type { AppUser } from "./rci-data";
+import type { AppUser } from "./types";
 
 export const mockAppUsers: AppUser[] = [
   {
