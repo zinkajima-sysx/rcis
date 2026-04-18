@@ -14,19 +14,19 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "id-ID",
     icons: [
       {
-        src: "/icon-192.svg",
+        src: "/appicon.png",
         sizes: "192x192",
-        type: "image/svg+xml",
+        type: "image/png",
       },
       {
-        src: "/icon-512.svg",
+        src: "/appicon.png",
         sizes: "512x512",
-        type: "image/svg+xml",
+        type: "image/png",
       },
       {
-        src: "/maskable-icon.svg",
+        src: "/appicon.png",
         sizes: "512x512",
-        type: "image/svg+xml",
+        type: "image/png",
         purpose: "maskable",
       },
     ],

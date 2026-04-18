@@ -30,7 +30,8 @@ export const metadata: Metadata = {
     title: "RCI PT KAI",
   },
   icons: {
-    apple: "/apple-icon",
+    icon: "/appicon.png",
+    apple: "/appicon.png",
   },
 };
 
