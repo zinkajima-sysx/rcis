@@ -106,7 +106,7 @@ export function getGallerySummary(activities: RailClinicActivity[]) {
   };
 }
 
-export function getDashboardMetrics(equipment: MedicalEquipment[]) {
+export function getDashboardMetrics(equipment: EnhancedMedicalEquipment[]) {
   const total = equipment.length;
   const layak = equipment.filter(
     (item) => item.statusKelayakan === "Layak Pakai"
@@ -143,19 +143,19 @@ export function getDashboardMetrics(equipment: MedicalEquipment[]) {
   ];
 }
 
-export function getCalibrationAlerts(equipment: MedicalEquipment[]) {
+export function getCalibrationAlerts(equipment: EnhancedMedicalEquipment[]) {
   return equipment
-    .filter((item) => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe")
+    .filter((item) => item.calibrationTone !== "safe")
     .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime());
 }
 
-export function getUpcomingSchedule(equipment: MedicalEquipment[]) {
+export function getUpcomingSchedule(equipment: EnhancedMedicalEquipment[]) {
   return equipment
-    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime())
-    .filter((item) => getCalibrationTone(item.tglRencanaKalibrasi) !== "safe");
+    .filter((item) => item.calibrationTone !== "safe")
+    .sort((a, b) => new Date(a.tglRencanaKalibrasi).getTime() - new Date(b.tglRencanaKalibrasi).getTime());
 }
 
-export function getCategoryTotals(equipment: MedicalEquipment[], categories: EquipmentCategory[]) {
+export function getCategoryTotals(equipment: EnhancedMedicalEquipment[], categories: EquipmentCategory[]) {
   return categories.map(cat => {
     const total = equipment.filter(item => item.kategoriId === cat.id).length;
     const layak = equipment.filter(item => item.kategoriId === cat.id && item.statusKelayakan === "Layak Pakai").length;
