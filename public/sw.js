@@ -1,81 +1,45 @@
-const CACHE_NAME = "rci-shell-v1";
-const STATIC_ASSETS = [
-  "/",
-  "/inventory",
-  "/gallery",
-  "/manifest.webmanifest",
-  "/icon-192.svg",
-  "/icon-512.svg",
-  "/maskable-icon.svg",
-];
+const CACHE_NAME = 'rcis-static-v2';
+const APP_SHELL = ['/manifest.webmanifest', '/logorcis.png', '/icons/icon-192.png', '/icons/icon-512.png'];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key))
-        )
-      )
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting()),
   );
-  self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim()),
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  const url = new URL(request.url);
+
+  if (request.method !== 'GET') {
     return;
   }
 
-  const requestUrl = new URL(event.request.url);
-
-  if (requestUrl.origin !== self.location.origin) {
-    return;
-  }
-
-  if (
-    requestUrl.pathname.startsWith("/_next/") ||
-    requestUrl.pathname === "/sw.js" ||
-    requestUrl.searchParams.has("_rsc")
-  ) {
-    return;
-  }
-
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        return cache.match(event.request) || cache.match("/");
-      })
-    );
-
+  if (request.mode === 'navigate' || url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(request));
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse.ok) {
-          const responseClone = networkResponse.clone();
-
-          void caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+    fetch(request)
+      .then((response) => {
+        if (response.ok && url.origin === self.location.origin) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
         }
 
-        return networkResponse;
-      });
-    })
+        return response;
+      })
+      .catch(() => caches.match(request)),
   );
 });
