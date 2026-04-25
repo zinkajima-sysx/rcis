@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-import { formatDateIndonesia } from '@/lib/date-id';
+import { formatDateForInputIndonesia, formatDateIndonesia } from '@/lib/date-id';
 import type { PermissionSet } from '@/lib/permissions';
 import { uploadImageAsset } from '@/lib/uploads/client';
 
@@ -46,7 +46,7 @@ type HandoverClientProps = {
 };
 
 function getTodayIndonesiaInput() {
-  return formatDateIndonesia(new Date());
+  return formatDateForInputIndonesia(new Date());
 }
 
 export default function HandoverClient({
@@ -530,7 +530,7 @@ export default function HandoverClient({
           <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 text-sm text-slate-300">
             <div className="font-semibold text-sky-400 mb-2">Format & aturan</div>
             <ul className="space-y-2 text-sm text-slate-300">
-              <li>Tanggal menggunakan format Indonesia `DD/MM/YYYY`.</li>
+              <li>Semua field tanggal menggunakan date picker.</li>
               <li>Tanggal kegiatan tujuan tidak boleh sama dengan tanggal kegiatan asal.</li>
               <li>Penyerah dan penerima diambil dari referensi user aktif.</li>
               <li>Wilayah asal dan tujuan diambil dari referensi DAOP/DIVRE.</li>
@@ -588,9 +588,8 @@ export default function HandoverClient({
                         value={tanggalKegiatanAsal}
                         onChange={(event) => setTanggalKegiatanAsal(event.target.value)}
                         disabled={isPending || isUploading}
-                        type="text"
-                        placeholder="DD/MM/YYYY"
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                        type="date"
+                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -638,9 +637,8 @@ export default function HandoverClient({
                         value={tanggalKegiatanKe}
                         onChange={(event) => setTanggalKegiatanKe(event.target.value)}
                         disabled={isPending || isUploading}
-                        type="text"
-                        placeholder="DD/MM/YYYY"
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+                        type="date"
+                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 [color-scheme:dark] disabled:opacity-50"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -684,9 +682,8 @@ export default function HandoverClient({
                     value={tanggalSerahTerima}
                     onChange={(event) => setTanggalSerahTerima(event.target.value)}
                     disabled={isPending || isUploading}
-                    type="text"
-                    placeholder="DD/MM/YYYY"
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                    type="date"
+                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50"
                   />
                 </div>
               </section>

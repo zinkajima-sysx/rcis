@@ -1,4 +1,4 @@
-const INDONESIAN_DATE_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+const DATE_INPUT_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export function formatDateIndonesia(value: Date | string | null | undefined) {
   if (!value) {
@@ -30,23 +30,23 @@ export function formatDateForInputIndonesia(value: Date | string | null | undefi
   }
 
   return [
-    String(resolvedDate.getDate()).padStart(2, '0'),
-    String(resolvedDate.getMonth() + 1).padStart(2, '0'),
     String(resolvedDate.getFullYear()),
-  ].join('/');
+    String(resolvedDate.getMonth() + 1).padStart(2, '0'),
+    String(resolvedDate.getDate()).padStart(2, '0'),
+  ].join('-');
 }
 
-export function parseIndonesianDate(value: string) {
+export function parseDateInput(value: string) {
   const normalizedValue = value.trim();
-  const match = INDONESIAN_DATE_PATTERN.exec(normalizedValue);
+  const match = DATE_INPUT_PATTERN.exec(normalizedValue);
 
   if (!match) {
     return null;
   }
 
-  const day = Number.parseInt(match[1], 10);
+  const year = Number.parseInt(match[1], 10);
   const month = Number.parseInt(match[2], 10);
-  const year = Number.parseInt(match[3], 10);
+  const day = Number.parseInt(match[3], 10);
   const resolvedDate = new Date(year, month - 1, day);
 
   if (
@@ -61,6 +61,8 @@ export function parseIndonesianDate(value: string) {
   resolvedDate.setHours(0, 0, 0, 0);
   return resolvedDate;
 }
+
+export const parseIndonesianDate = parseDateInput;
 
 export function getTodayStart() {
   const today = new Date();

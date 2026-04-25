@@ -95,7 +95,10 @@ export default async function Page() {
     { layak: 0, perbaikan: 0, rusak: 0 },
   );
 
+  const alkesTanpaKalibrasi = alkesSummary.filter((item) => item.jadwalKalibrasi === null);
+
   const alkesKalibrasiTerdekat = alkesSummary
+    .filter((item) => item.jadwalKalibrasi !== null)
     .map((item) => ({
       ...item,
       selisihHari: getDaysUntilDate(item.jadwalKalibrasi, today),
@@ -104,6 +107,7 @@ export default async function Page() {
     .sort((left, right) => (left.selisihHari ?? 0) - (right.selisihHari ?? 0));
 
   const alkesLewatKalibrasi = alkesSummary
+    .filter((item) => item.jadwalKalibrasi !== null)
     .map((item) => ({
       ...item,
       selisihHari: getDaysUntilDate(item.jadwalKalibrasi, today),
@@ -228,7 +232,7 @@ export default async function Page() {
 
       <div>
         <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Monitoring Kalibrasi Alkes</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
           <div className="bg-slate-800/50 p-4 rounded-xl border border-amber-500/20 flex items-center justify-between">
             <div>
               <div className="text-xs text-slate-400 font-medium">Mendekati Jadwal Kalibrasi</div>
@@ -244,6 +248,14 @@ export default async function Page() {
               <div className="text-xs text-slate-500 mt-1">Perlu tindak lanjut segera</div>
             </div>
             <XOctagon className="text-rose-500/40" size={24} />
+          </div>
+          <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-500/20 flex items-center justify-between">
+            <div>
+              <div className="text-xs text-slate-400 font-medium">Tanpa Kalibrasi</div>
+              <div className="text-2xl font-bold text-slate-300 mt-1">{alkesTanpaKalibrasi.length}</div>
+              <div className="text-xs text-slate-500 mt-1">Tidak masuk monitoring jadwal</div>
+            </div>
+            <Stethoscope className="text-slate-500/40" size={24} />
           </div>
         </div>
       </div>
@@ -286,7 +298,10 @@ export default async function Page() {
                     <td className="py-3.5 px-5 text-sm font-mono text-sky-400">{item.kode}</td>
                     <td className="py-3.5 px-5 text-sm font-semibold text-slate-50">{item.nama}</td>
                     <td className="py-3.5 px-5 text-sm text-slate-300">{item.kategori.nama}</td>
-                    <td className="py-3.5 px-5 text-sm text-slate-400">{item.kondisi}</td>
+                    <td className="py-3.5 px-5 text-sm text-slate-400">
+                      {item.kondisi}
+                      {item.jadwalKalibrasi === null ? ' • Tanpa kalibrasi' : ''}
+                    </td>
                   </tr>
                 )) : (
                   <tr>

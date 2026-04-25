@@ -2,7 +2,7 @@
 
 import { getNextBusinessId } from '@/lib/business-ids';
 import { assertModuleAccess, getUser } from '@/lib/auth';
-import { parseIndonesianDate } from '@/lib/date-id';
+import { parseDateInput } from '@/lib/date-id';
 import { db } from '@/lib/db';
 import { expectRow } from '@/lib/db/rows';
 import { handover } from '@/lib/db/schema';
@@ -22,10 +22,10 @@ function getRequiredValue(formData: FormData, key: string, label: string) {
 
 function parseRequiredDate(formData: FormData, key: string, label: string) {
   const value = getRequiredValue(formData, key, label);
-  const parsedDate = parseIndonesianDate(value);
+  const parsedDate = parseDateInput(value);
 
   if (!parsedDate) {
-    throw new Error(`${label} wajib diisi dengan format DD/MM/YYYY.`);
+    throw new Error(`${label} wajib diisi lewat date picker.`);
   }
 
   return parsedDate;
@@ -106,13 +106,13 @@ async function parseHandoverPayload(formData: FormData) {
   const nippPenerima = getRequiredValue(formData, 'nippPenerima', 'NIPP penerima');
   const tanggalSerahTerimaRaw = String(formData.get('tanggalSerahTerima') ?? '').trim();
   const tanggalSerahTerima = tanggalSerahTerimaRaw
-    ? parseIndonesianDate(tanggalSerahTerimaRaw)
+    ? parseDateInput(tanggalSerahTerimaRaw)
     : new Date(new Date().setHours(0, 0, 0, 0));
   const fotoSerahTerima = String(formData.get('fotoSerahTerima') ?? '').trim();
   const fotoBukti = String(formData.get('fotoBukti') ?? '').trim();
 
   if (!tanggalSerahTerima) {
-    throw new Error('Tanggal serah terima wajib diisi dengan format DD/MM/YYYY.');
+    throw new Error('Tanggal serah terima wajib diisi lewat date picker.');
   }
 
   if (tanggalKegiatanAsal.getTime() === tanggalKegiatanKe.getTime()) {

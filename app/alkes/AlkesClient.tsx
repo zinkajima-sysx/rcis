@@ -3,7 +3,7 @@ import React, { useMemo, useRef, useState, useTransition } from 'react';
 import { AlertTriangle, CalendarClock, CheckCircle2, Download, Edit2, Filter, LayoutGrid, List, Loader2, Plus, Search, Trash2, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { createAlkes, deleteAlkes, updateAlkes } from './actions';
-import { formatDateIndonesia, getDaysUntilDate } from '@/lib/date-id';
+import { formatDateForInputIndonesia, formatDateIndonesia, getDaysUntilDate } from '@/lib/date-id';
 import { uploadImageAsset } from '@/lib/uploads/client';
 import type { PermissionSet } from '@/lib/permissions';
 
@@ -11,10 +11,12 @@ type AlkesItem = {
   id: string;
   kode: string;
   nama: string;
+  jumlah: number;
   kategori: string;
   tahunPengadaan: number | null;
   kalibrasiTerakhir: string;
   jadwalKalibrasi: string;
+  calibrationMode: 'required' | 'none';
   kondisi: string;
   gambarUrl?: string | null;
   keterangan?: string | null;
@@ -31,8 +33,10 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
   // Form states
   const [nama, setNama] = useState('');
+  const [jumlah, setJumlah] = useState('1');
   const [kategori, setKategori] = useState('Non Elektromedik');
   const [tahunPengadaan, setTahunPengadaan] = useState('');
+  const [calibrationMode, setCalibrationMode] = useState<'required' | 'none'>('required');
   const [kalibrasiTerakhir, setKalibrasiTerakhir] = useState('');
   const [jadwalKalibrasi, setJadwalKalibrasi] = useState('');
   const [kondisi, setKondisi] = useState('Layak Pakai');
@@ -46,16 +50,22 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
   const filteredData = data.filter(d => 
     d.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    d.kode.toLowerCase().includes(searchTerm.toLowerCase())
+    d.kode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    d.kategori.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const calibrationSummary = useMemo(() => {
     return data.reduce(
       (accumulator, item) => {
+        if (item.calibrationMode === 'none') {
+          accumulator.withoutCalibration += 1;
+          return accumulator;
+        }
+
         const daysUntil = getDaysUntilDate(item.jadwalKalibrasi);
 
         if (daysUntil === null) {
-          accumulator.unset += 1;
+          accumulator.withoutCalibration += 1;
         } else if (daysUntil < 0) {
           accumulator.overdue += 1;
         } else if (daysUntil <= 30) {
@@ -66,7 +76,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
         return accumulator;
       },
-      { upcoming: 0, overdue: 0, safe: 0, unset: 0 },
+      { upcoming: 0, overdue: 0, safe: 0, withoutCalibration: 0 },
     );
   }, [data]);
 
@@ -86,10 +96,12 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
     id: item.id,
     kode: item.kode,
     nama: item.nama,
+    jumlah: item.jumlah ?? 0,
     kategori: item.kategori ?? 'Umum',
     tahunPengadaan: item.tahunPengadaan ?? null,
-    kalibrasiTerakhir: typeof item.kalibrasiTerakhir === 'string' ? item.kalibrasiTerakhir : formatDateIndonesia(item.kalibrasiTerakhir),
-    jadwalKalibrasi: typeof item.jadwalKalibrasi === 'string' ? item.jadwalKalibrasi : formatDateIndonesia(item.jadwalKalibrasi),
+    kalibrasiTerakhir: typeof item.kalibrasiTerakhir === 'string' ? item.kalibrasiTerakhir : formatDateForInputIndonesia(item.kalibrasiTerakhir),
+    jadwalKalibrasi: typeof item.jadwalKalibrasi === 'string' ? item.jadwalKalibrasi : formatDateForInputIndonesia(item.jadwalKalibrasi),
+    calibrationMode: item.kalibrasiTerakhir || item.jadwalKalibrasi ? 'required' : 'none',
     kondisi: item.kondisi,
     gambarUrl: item.gambarUrl ?? '',
     keterangan: item.keterangan ?? '',
@@ -128,8 +140,10 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
   const resetForm = () => {
     setEditingId('');
     setNama('');
+    setJumlah('1');
     setKategori('Non Elektromedik');
     setTahunPengadaan('');
+    setCalibrationMode('required');
     setKalibrasiTerakhir('');
     setJadwalKalibrasi('');
     setKondisi('Layak Pakai');
@@ -148,8 +162,10 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
     setFormMode('edit');
     setEditingId(item.id);
     setNama(item.nama);
+    setJumlah(String(item.jumlah ?? 1));
     setKategori(item.kategori);
     setTahunPengadaan(String(item.tahunPengadaan ?? ''));
+    setCalibrationMode(item.calibrationMode ?? (item.kalibrasiTerakhir || item.jadwalKalibrasi ? 'required' : 'none'));
     setKalibrasiTerakhir(item.kalibrasiTerakhir ?? '');
     setJadwalKalibrasi(item.jadwalKalibrasi ?? '');
     setKondisi(item.kondisi);
@@ -185,10 +201,12 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
     const formData = new FormData();
     formData.append('nama', nama);
+    formData.append('jumlah', jumlah);
     formData.append('kategori', kategori);
     formData.append('tahunPengadaan', tahunPengadaan);
-    formData.append('kalibrasiTerakhir', kalibrasiTerakhir);
-    formData.append('jadwalKalibrasi', jadwalKalibrasi);
+    formData.append('calibrationMode', calibrationMode);
+    formData.append('kalibrasiTerakhir', calibrationMode === 'required' ? kalibrasiTerakhir : '');
+    formData.append('jadwalKalibrasi', calibrationMode === 'required' ? jadwalKalibrasi : '');
     formData.append('kondisi', kondisi);
     formData.append('keterangan', keterangan);
     formData.append('imgUrl', url);
@@ -301,8 +319,8 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
             </div>
           </div>
           <div className="rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
-            <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Belum Diatur</div>
-            <div className="text-lg font-bold text-slate-300 mt-1">{calibrationSummary.unset}</div>
+            <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Tanpa Kalibrasi</div>
+            <div className="text-lg font-bold text-slate-300 mt-1">{calibrationSummary.withoutCalibration}</div>
           </div>
         </div>
 
@@ -315,7 +333,12 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filteredData.map(item => {
-                const calibrationBadge = getCalibrationBadge(item.jadwalKalibrasi);
+                const calibrationBadge = item.calibrationMode === 'none'
+                  ? {
+                      label: 'Tanpa kalibrasi',
+                      className: 'bg-slate-500/10 text-slate-400 border border-slate-500/20',
+                    }
+                  : getCalibrationBadge(item.jadwalKalibrasi);
 
                 return (
                 <div key={item.id} className="bg-slate-900 border border-white/10 rounded-xl overflow-hidden flex flex-col group relative">
@@ -334,12 +357,16 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                     </div>
                     <div className="grid grid-cols-2 gap-2 mt-auto">
                       <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
+                        <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Jumlah</div>
+                        <div className="text-sm text-slate-100 font-semibold mt-1">{item.jumlah}</div>
+                      </div>
+                      <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
                         <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Pengadaan</div>
                         <div className="text-sm text-slate-100 font-semibold mt-1">{item.tahunPengadaan ?? '-'}</div>
                       </div>
                       <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
                         <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Kalibrasi</div>
-                        <div className="text-sm text-slate-100 font-semibold mt-1">{formatDateIndonesia(item.jadwalKalibrasi)}</div>
+                        <div className="text-sm text-slate-100 font-semibold mt-1">{item.calibrationMode === 'none' ? 'Tanpa kalibrasi' : formatDateIndonesia(item.jadwalKalibrasi)}</div>
                       </div>
                     </div>
                     <div className="mt-2 grid grid-cols-2 gap-2">
@@ -358,6 +385,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold w-24">Kode Alkes</th>
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Info Alat</th>
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kategori</th>
+                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Jumlah</th>
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Pengadaan</th>
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kalibrasi</th>
                     <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kelayakan</th>
@@ -366,7 +394,12 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredData.map(item => {
-                    const calibrationBadge = getCalibrationBadge(item.jadwalKalibrasi);
+                    const calibrationBadge = item.calibrationMode === 'none'
+                      ? {
+                          label: 'Tanpa kalibrasi',
+                          className: 'bg-slate-500/10 text-slate-400 border border-slate-500/20',
+                        }
+                      : getCalibrationBadge(item.jadwalKalibrasi);
 
                     return (
                     <tr key={item.id} className="hover:bg-white/5 group">
@@ -383,11 +416,18 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                         </div>
                       </td>
                       <td className="py-3 px-4 text-sm text-slate-300">{item.kategori}</td>
+                      <td className="py-3 px-4 text-sm text-slate-300">{item.jumlah}</td>
                       <td className="py-3 px-4 text-sm text-slate-300">{item.tahunPengadaan ?? '-'}</td>
                       <td className="py-3 px-4">
                         <div className="flex flex-col">
-                          <span className="text-sm text-slate-300">{formatDateIndonesia(item.kalibrasiTerakhir)}</span>
-                          <span className="text-xs text-sky-400 mt-0.5">{formatDateIndonesia(item.jadwalKalibrasi)}</span>
+                          {item.calibrationMode === 'none' ? (
+                            <span className="text-sm text-slate-500">Tanpa kalibrasi</span>
+                          ) : (
+                            <>
+                              <span className="text-sm text-slate-300">{formatDateIndonesia(item.kalibrasiTerakhir)}</span>
+                              <span className="text-xs text-sky-400 mt-0.5">{formatDateIndonesia(item.jadwalKalibrasi)}</span>
+                            </>
+                          )}
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -444,6 +484,13 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-slate-300">Jumlah <span className="text-rose-400">*</span></label>
+                  <input required value={jumlah} onChange={e=>setJumlah(e.target.value)} disabled={isPending || isUploading} type="number" min="0" step="1" placeholder="Contoh: 1" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-medium text-slate-300">Tahun Pengadaan <span className="text-rose-400">*</span></label>
                   <input required value={tahunPengadaan} onChange={e=>setTahunPengadaan(e.target.value)} disabled={isPending || isUploading} type="text" inputMode="numeric" maxLength={4} placeholder="Contoh: 2024" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
                 </div>
@@ -460,16 +507,36 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Kalibrasi Terakhir <span className="text-rose-400">*</span></label>
-                  <input required value={kalibrasiTerakhir} onChange={e=>setKalibrasiTerakhir(e.target.value)} disabled={isPending || isUploading} type="text" inputMode="numeric" placeholder="DD/MM/YYYY" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
-                  <span className="text-xs text-slate-500">Gunakan format Indonesia: DD/MM/YYYY</span>
+                  <label className="text-sm font-medium text-slate-300">Aturan Kalibrasi <span className="text-rose-400">*</span></label>
+                  <div className="grid grid-cols-1 gap-2 rounded-xl border border-white/10 bg-slate-900 p-3">
+                    <label className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 cursor-pointer">
+                      <input type="radio" name="calibrationMode" value="required" checked={calibrationMode === 'required'} onChange={() => setCalibrationMode('required')} disabled={isPending || isUploading} className="mt-1" />
+                      <span className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-200">Wajib Kalibrasi</span>
+                        <span className="text-xs text-slate-500">Tanggal kalibrasi terakhir dan rencana kalibrasi wajib diisi.</span>
+                      </span>
+                    </label>
+                    <label className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 cursor-pointer">
+                      <input type="radio" name="calibrationMode" value="none" checked={calibrationMode === 'none'} onChange={() => setCalibrationMode('none')} disabled={isPending || isUploading} className="mt-1" />
+                      <span className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-200">Tanpa Kalibrasi</span>
+                        <span className="text-xs text-slate-500">Untuk alat seperti pinset anatomis dan alat lain yang tidak perlu kalibrasi.</span>
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Jadwal Kalibrasi <span className="text-rose-400">*</span></label>
-                <input required value={jadwalKalibrasi} onChange={e=>setJadwalKalibrasi(e.target.value)} disabled={isPending || isUploading} type="text" inputMode="numeric" placeholder="DD/MM/YYYY" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
-                <span className="text-xs text-slate-500">Tanggal tidak boleh lebih awal dari kalibrasi terakhir.</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-slate-300">Kalibrasi Terakhir {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
+                  <input required={calibrationMode === 'required'} value={kalibrasiTerakhir} onChange={e=>setKalibrasiTerakhir(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-slate-300">Jadwal Kalibrasi {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
+                  <input required={calibrationMode === 'required'} value={jadwalKalibrasi} onChange={e=>setJadwalKalibrasi(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50" />
+                  <span className="text-xs text-slate-500">Jika wajib kalibrasi, jadwal tidak boleh lebih awal dari kalibrasi terakhir.</span>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">

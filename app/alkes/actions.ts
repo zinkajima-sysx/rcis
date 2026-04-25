@@ -2,7 +2,7 @@
 
 import { getNextBusinessId } from '@/lib/business-ids';
 import { assertModuleAccess } from '@/lib/auth';
-import { parseIndonesianDate } from '@/lib/date-id';
+import { parseDateInput } from '@/lib/date-id';
 import { db } from '@/lib/db';
 import { expectRow } from '@/lib/db/rows';
 import { alkes, kategoriAlkes } from '@/lib/db/schema';
@@ -26,20 +26,47 @@ function parseTahunPengadaan(rawValue: FormDataEntryValue | null) {
   return year;
 }
 
+function parseJumlah(rawValue: FormDataEntryValue | null) {
+  const value = String(rawValue ?? '').trim();
+
+  if (!/^\d+$/.test(value)) {
+    throw new Error('Jumlah wajib diisi angka bulat.');
+  }
+
+  const jumlah = Number.parseInt(value, 10);
+
+  if (jumlah < 0) {
+    throw new Error('Jumlah tidak boleh negatif.');
+  }
+
+  return jumlah;
+}
+
 function parseKalibrasiFields(formData: FormData) {
   const tahunPengadaan = parseTahunPengadaan(formData.get('tahunPengadaan'));
+  const jumlah = parseJumlah(formData.get('jumlah'));
+  const mode = String(formData.get('calibrationMode') ?? 'required').trim();
   const kalibrasiTerakhirRaw = String(formData.get('kalibrasiTerakhir') ?? '').trim();
   const jadwalKalibrasiRaw = String(formData.get('jadwalKalibrasi') ?? '').trim();
 
-  const kalibrasiTerakhir = parseIndonesianDate(kalibrasiTerakhirRaw);
-  const jadwalKalibrasi = parseIndonesianDate(jadwalKalibrasiRaw);
+  if (mode === 'none') {
+    return {
+      jumlah,
+      tahunPengadaan,
+      kalibrasiTerakhir: null,
+      jadwalKalibrasi: null,
+    };
+  }
+
+  const kalibrasiTerakhir = parseDateInput(kalibrasiTerakhirRaw);
+  const jadwalKalibrasi = parseDateInput(jadwalKalibrasiRaw);
 
   if (!kalibrasiTerakhir) {
-    throw new Error('Kalibrasi terakhir wajib diisi dengan format DD/MM/YYYY.');
+    throw new Error('Kalibrasi terakhir wajib diisi dengan date picker.');
   }
 
   if (!jadwalKalibrasi) {
-    throw new Error('Jadwal kalibrasi wajib diisi dengan format DD/MM/YYYY.');
+    throw new Error('Jadwal kalibrasi wajib diisi dengan date picker.');
   }
 
   if (jadwalKalibrasi.getTime() < kalibrasiTerakhir.getTime()) {
@@ -47,6 +74,7 @@ function parseKalibrasiFields(formData: FormData) {
   }
 
   return {
+    jumlah,
     tahunPengadaan,
     kalibrasiTerakhir,
     jadwalKalibrasi,
@@ -61,7 +89,7 @@ export async function createAlkes(formData: FormData) {
     const kondisi = formData.get('kondisi') as string || 'Layak Pakai';
     const keterangan = formData.get('keterangan') as string || '';
     const imgUrl = formData.get('imgUrl') as string || '';
-    const { tahunPengadaan, kalibrasiTerakhir, jadwalKalibrasi } = parseKalibrasiFields(formData);
+    const { jumlah, tahunPengadaan, kalibrasiTerakhir, jadwalKalibrasi } = parseKalibrasiFields(formData);
 
     // Pastikan kategori ada
     let kategori = await db.query.kategoriAlkes.findFirst({
@@ -104,7 +132,7 @@ export async function createAlkes(formData: FormData) {
       kondisi,
       gambarUrl: imgUrl,
       keterangan,
-      jumlah: 1,
+      jumlah,
     }).returning();
     const newAlkes = expectRow(newAlkesRow, 'Alkes gagal dibuat.');
 
@@ -123,7 +151,7 @@ export async function updateAlkes(id: string, formData: FormData) {
     const kondisi = formData.get('kondisi') as string || 'Layak Pakai';
     const keterangan = formData.get('keterangan') as string || '';
     const imgUrl = formData.get('imgUrl') as string || '';
-    const { tahunPengadaan, kalibrasiTerakhir, jadwalKalibrasi } = parseKalibrasiFields(formData);
+    const { jumlah, tahunPengadaan, kalibrasiTerakhir, jadwalKalibrasi } = parseKalibrasiFields(formData);
 
     let kategori = await db.query.kategoriAlkes.findFirst({
       where: (kategoriAlkes, { eq }) => eq(kategoriAlkes.nama, kategoriNama),
@@ -147,6 +175,7 @@ export async function updateAlkes(id: string, formData: FormData) {
 
     const [updatedAlkesRow] = await db.update(alkes).set({
       nama,
+      jumlah,
       kategoriId: kategori.id,
       tahunPengadaan,
       kalibrasiTerakhir,
