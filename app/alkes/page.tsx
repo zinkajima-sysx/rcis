@@ -24,7 +24,7 @@ export default async function AlkesPage() {
      tahunPengadaan: a.tahunPengadaan,
      kalibrasiTerakhir: formatDateForInputIndonesia(a.kalibrasiTerakhir),
      jadwalKalibrasi: formatDateForInputIndonesia(a.jadwalKalibrasi),
-     calibrationMode: a.kalibrasiTerakhir || a.jadwalKalibrasi ? 'required' : 'none',
+     calibrationMode: (a.kalibrasiTerakhir || a.jadwalKalibrasi ? 'required' : 'none') as 'required' | 'none',
      kondisi: a.kondisi,
      gambarUrl: a.gambarUrl,
      keterangan: a.keterangan,
