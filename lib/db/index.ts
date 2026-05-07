@@ -14,8 +14,10 @@ const globalForDb = globalThis as unknown as {
 };
 
 const client = globalForDb.postgresClient ?? postgres(connectionString, {
-  max: 1,
-  prepare: false,
+  max: 10,            // Naikkan dari 1 → 10 agar request tidak antri
+  idle_timeout: 20,   // Tutup koneksi idle setelah 20 detik (baik untuk serverless)
+  connect_timeout: 10, // Timeout koneksi awal setelah 10 detik
+  prepare: false,     // Wajib false untuk NeonDB Pooler (pgBouncer-compatible)
 });
 
 if (process.env.NODE_ENV !== 'production') {

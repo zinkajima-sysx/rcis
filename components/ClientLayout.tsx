@@ -132,7 +132,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="md:hidden fixed left-0 top-0 w-full h-16 bg-slate-800 border-b border-white/10 flex items-center justify-between px-4 z-40 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded flex items-center justify-center p-1">
-            <Image src="/logorcis.png" alt="RCIS Logo" width={32} height={32} className="object-contain" priority unoptimized />
+            <Image src="/logorcis.png" alt="RCIS Logo" width={32} height={32} className="object-contain" priority />
           </div>
           <span className="font-bold text-slate-50 text-lg tracking-tight">RCIS</span>
         </div>
@@ -172,7 +172,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
         <div className={`p-6 shrink-0 transition-all duration-300 ${isCollapsed ? 'md:px-4 md:pb-4 md:pt-6' : ''}`}>
           <div className={`flex items-center justify-center bg-white rounded-xl shadow-md transition-all duration-300 relative w-full ${isCollapsed ? 'min-h-[80px] p-3 md:h-12 md:min-h-0 md:p-1.5' : 'p-3 min-h-[80px]'}`}>
-            <Image src="/logorcis.png" alt="RCIS Logo" fill className={`object-contain transition-all duration-300 ${isCollapsed ? 'p-1' : 'p-2'}`} priority unoptimized />
+            <Image src="/logorcis.png" alt="RCIS Logo" fill className={`object-contain transition-all duration-300 ${isCollapsed ? 'p-1' : 'p-2'}`} priority />
           </div>
         </div>
         

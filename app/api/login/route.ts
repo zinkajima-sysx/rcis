@@ -1,12 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { db } from '@/lib/db';
 import { normalizeHakAkses } from '@/lib/permissions';
 import { clearLoginRateLimit, consumeLoginRateLimit, getJwtSecret } from '@/lib/security';
 
 const LOGIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
+
+// ─── Web Crypto JWT helpers (Edge-runtime & Node.js compatible) ───────────────
+
+const _textEncoder = new TextEncoder();
+
+function _base64UrlEncode(input: Uint8Array | ArrayBuffer): string {
+  // Terima Uint8Array (dari TextEncoder.encode) maupun ArrayBuffer (dari crypto.subtle.sign)
+  const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
+  let binary = '';
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function _signJwt(payload: Record<string, unknown>, secret: string, expiresInSeconds: number): Promise<string> {
+  const header = _base64UrlEncode(
+    _textEncoder.encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' })),
+  );
+
+  const payloadWithExp = {
+    ...payload,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + expiresInSeconds,
+  };
+
+  const payloadEncoded = _base64UrlEncode(
+    _textEncoder.encode(JSON.stringify(payloadWithExp)),
+  );
+
+  const signingInput = `${header}.${payloadEncoded}`;
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    _textEncoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+
+  const signatureBuffer = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    _textEncoder.encode(signingInput),
+  );
+
+  const signature = _base64UrlEncode(signatureBuffer);
+
+  return `${signingInput}.${signature}`;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getLoginErrorResponse(error: unknown) {
   const message = error instanceof Error ? error.message : '';
@@ -48,6 +99,8 @@ function getClientIp(request: NextRequest) {
 
   return request.headers.get('x-real-ip')?.trim() || 'unknown';
 }
+
+// ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
   try {
@@ -121,8 +174,8 @@ export async function POST(request: NextRequest) {
 
     const hakAkses = normalizeHakAkses(user.entitas.hakAkses);
 
-    // Buat JWT token
-    const token = jwt.sign(
+    // Buat JWT token menggunakan Web Crypto (24 jam = 86400 detik)
+    const token = await _signJwt(
       {
         userId: user.id,
         nip: user.nip,
@@ -133,7 +186,7 @@ export async function POST(request: NextRequest) {
         daop: user.daop,
       },
       getJwtSecret(),
-      { expiresIn: '24h' }
+      86400, // 24 jam
     );
 
     // Set cookie dengan token
