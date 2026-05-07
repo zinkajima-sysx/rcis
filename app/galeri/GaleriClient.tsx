@@ -158,7 +158,7 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
     }
 
     return (
-      <div className={`absolute inset-0 flex items-center justify-center bg-slate-800 text-slate-500 text-xs font-medium ${className}`}>
+      <div className={`absolute inset-0 flex items-center justify-center bg-white text-slate-500 text-xs font-medium ${className}`}>
         {label} belum tersedia
       </div>
     );
@@ -168,20 +168,20 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
     <>
       <div className="flex justify-between items-center shrink-0 gap-4 flex-wrap">
         <div className="relative max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
           <input 
             type="text" 
             placeholder="Cari kegiatan, lokasi stasiun..." 
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-900 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 "
+            className="w-full bg-slate-50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm focus:shadow-md transition-shadow duration-200"
           />
         </div>
         <div className="flex gap-3">
           <select 
             value={filterDaop} 
             onChange={e=>setFilterDaop(e.target.value)} 
-            className="bg-slate-900 border border-white/10 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-sky-500 cursor-pointer appearance-none pr-8 relative"
+            className="bg-slate-50 border border-white/10 text-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-sky-500 cursor-pointer appearance-none pr-8 relative shadow-sm focus:shadow-md transition-shadow duration-200"
           >
             <option value="Semua Daop/Divre">Semua Daop/Divre</option>
             {daopList?.map(d => (
@@ -201,9 +201,9 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shrink-0">
         {filteredData.length > 0 ? filteredData.map((item) => (
-          <div key={item.id} className="bg-slate-800 rounded-2xl border border-white/10 overflow-hidden flex flex-col group relative">
-            {isPending && <div className="absolute inset-0 z-10 bg-slate-900/40 rounded-2xl pointer-events-none" />}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-900 shrink-0">
+          <div key={item.id} className="bg-white rounded-2xl border border-white/10 overflow-hidden flex flex-col group relative shadow-md hover:shadow-lg transition-shadow duration-300">
+            {isPending && <div className="absolute inset-0 z-10 bg-slate-50/40 rounded-2xl pointer-events-none" />}
+            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-50 shrink-0">
               <div className="relative aspect-square overflow-hidden rounded-tl-xl rounded-bl-sm">
                 {renderGalleryImage(item.images?.[0], 'Foto utama', '')}
               </div>
@@ -215,16 +215,16 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
               <div className="flex justify-between items-start mb-2">
                 <span className="bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest font-mono">{item.kode}</span>
                 <div className="flex gap-2">
-                   {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 p-1.5 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50"><Edit2 size={16}/></button>}
-                   {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 p-1.5 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50"><Trash2 size={16}/></button>}
+                   {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="text-slate-600 hover:text-sky-400 hover:bg-sky-400/10 p-1.5 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50"><Edit2 size={16}/></button>}
+                   {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 p-1.5 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50"><Trash2 size={16}/></button>}
                 </div>
               </div>
-              <h3 className="font-bold text-slate-50 text-lg mb-3 line-clamp-2">{item.namaKegiatan}</h3>
+              <h3 className="font-bold text-slate-900 text-lg mb-3 line-clamp-2">{item.namaKegiatan}</h3>
               <div className="mt-auto flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-sm text-slate-400">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Calendar size={14} className="text-slate-500" /> {new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric'})}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-400">
+                <div className="flex items-center gap-2 text-sm text-slate-600">
                   <MapPin size={14} className="text-slate-500" /> {item.lokasi} ({item.daop})
                 </div>
               </div>
@@ -239,24 +239,24 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSave} className="bg-slate-800 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+          <form onSubmit={handleSave} className="bg-white border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
-              <h2 className="text-lg font-bold text-slate-50">{formMode === 'add' ? 'Upload Galeri Baru' : 'Edit Galeri'}</h2>
-              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="text-slate-400 hover:text-slate-200 ">
+              <h2 className="text-lg font-bold text-slate-900">{formMode === 'add' ? 'Upload Galeri Baru' : 'Edit Galeri'}</h2>
+              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="text-slate-600 hover:text-slate-800 ">
                 <X size={20} />
               </button>
             </div>
             
             <div className="p-6 overflow-y-auto flex flex-col gap-5 flex-1 custom-scrollbar">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Kegiatan Rail Clinic (Yang Telah Selesai) <span className="text-rose-400">*</span></label>
+                <label className="text-sm font-medium text-slate-700">Kegiatan Rail Clinic (Yang Telah Selesai) <span className="text-rose-400">*</span></label>
                 {jadwalSelesai?.length > 0 ? (
                   <select 
                     required 
                     value={namaKegiatan} 
                     onChange={e => handleJadwalSelect(e.target.value)} 
                     disabled={isPending || isUploading} 
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                   >
                     <option value="" disabled>Pilih dari Jadwal RC...</option>
                     {jadwalSelesai.map(j => (
@@ -272,12 +272,12 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Tanggal <span className="text-rose-400">*</span></label>
-                  <input required value={tanggal} onChange={e=>setTanggal(e.target.value)} disabled={isPending || isUploading} type="date" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50" />
+                  <label className="text-sm font-medium text-slate-700">Tanggal <span className="text-rose-400">*</span></label>
+                  <input required value={tanggal} onChange={e=>setTanggal(e.target.value)} disabled={isPending || isUploading} type="date" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-600 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Wilayah Daop/Divre <span className="text-rose-400">*</span></label>
-                  <select required value={daop} onChange={e=>setDaop(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50">
+                  <label className="text-sm font-medium text-slate-700">Wilayah Daop/Divre <span className="text-rose-400">*</span></label>
+                  <select required value={daop} onChange={e=>setDaop(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-600 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200">
                     <option value="" disabled>Pilih Wilayah...</option>
                     {daopList?.map(d => (
                        <option key={d.id} value={d.nama}>{d.nama}</option>
@@ -287,13 +287,13 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Lokasi Stasiun <span className="text-rose-400">*</span></label>
-                <input required value={lokasi} onChange={e=>setLokasi(e.target.value)} disabled={isPending || isUploading} type="text" placeholder="Contoh: Stasiun Wates" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                <label className="text-sm font-medium text-slate-700">Lokasi Stasiun <span className="text-rose-400">*</span></label>
+                <input required value={lokasi} onChange={e=>setLokasi(e.target.value)} disabled={isPending || isUploading} type="text" placeholder="Contoh: Stasiun Wates" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Keterangan (Opsional)</label>
-                <textarea value={keterangan} onChange={e=>setKeterangan(e.target.value)} disabled={isPending || isUploading} rows={2} placeholder="Deskripsi ringkas kegiatan..." className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"></textarea>
+                <label className="text-sm font-medium text-slate-700">Keterangan (Opsional)</label>
+                <textarea value={keterangan} onChange={e=>setKeterangan(e.target.value)} disabled={isPending || isUploading} rows={2} placeholder="Deskripsi ringkas kegiatan..." className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"></textarea>
               </div>
 
               {/* Upload Foto Galeri */}
@@ -303,28 +303,28 @@ export default function GaleriClient({ initialData, daopList, jadwalSelesai, per
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input type="file" accept="image/*" ref={fileInput1} onChange={e => setFile1(e.target.files?.[0] || null)} className="hidden" />
-                  <div onClick={() => fileInput1.current?.click()} className={`border-2 border-dashed rounded-xl bg-slate-900/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file1 ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${file1 ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-400 group-hover:text-sky-400'}`}>
+                  <div onClick={() => fileInput1.current?.click()} className={`border-2 border-dashed rounded-xl bg-slate-50/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file1 ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${file1 ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-600 group-hover:text-sky-400'}`}>
                       {file1 ? <CheckCircle2 size={18} /> : <Upload size={18} />}
                     </div>
-                    <div className="text-sm font-medium text-slate-300 mb-1">Foto Utama {formMode === 'add' && <span className="text-rose-400">*</span>}</div>
+                    <div className="text-sm font-medium text-slate-700 mb-1">Foto Utama {formMode === 'add' && <span className="text-rose-400">*</span>}</div>
                     <div className="text-xs text-sky-400 font-mono truncate max-w-[200px]">{file1 ? file1.name : existingImages[0] ? 'Foto lama dipakai' : 'Pilih file (Maks 5MB)'}</div>
                   </div>
                   
                   <input type="file" accept="image/*" ref={fileInput2} onChange={e => setFile2(e.target.files?.[0] || null)} className="hidden" />
-                  <div onClick={() => fileInput2.current?.click()} className={`border-2 border-dashed rounded-xl bg-slate-900/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file2 ? 'border-emerald-500/50 hover:border-emerald-400' : 'border-white/10 hover:border-emerald-500/50'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${file2 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 group-hover:text-emerald-400'}`}>
+                  <div onClick={() => fileInput2.current?.click()} className={`border-2 border-dashed rounded-xl bg-slate-50/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file2 ? 'border-emerald-500/50 hover:border-emerald-400' : 'border-white/10 hover:border-emerald-500/50'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${file2 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-600 group-hover:text-emerald-400'}`}>
                       {file2 ? <CheckCircle2 size={18} /> : <Upload size={18} />}
                     </div>
-                    <div className="text-sm font-medium text-slate-300 mb-1">Foto Tambahan (Opsional)</div>
+                    <div className="text-sm font-medium text-slate-700 mb-1">Foto Tambahan (Opsional)</div>
                     <div className="text-xs text-emerald-400 font-mono truncate max-w-[200px]">{file2 ? file2.name : 'Pilih file (Maks 5MB)'}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-slate-800/80 rounded-b-2xl">
-              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/5 disabled:opacity-50">Batal</button>
+            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-white/80 rounded-b-2xl">
+              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-white/5 disabled:opacity-50">Batal</button>
               <button type="submit" disabled={isPending || isUploading || !namaKegiatan} className="px-5 py-2 rounded-lg text-sm font-semibold bg-sky-500 text-slate-950 hover:bg-sky-600 shadow-sm flex items-center gap-2 disabled:opacity-50">
                  {isUploading ? <><Loader2 size={16} className="animate-spin"/> Mengunggah...</> : isPending ? <><Loader2 size={16} className="animate-spin"/> Menyimpan</> : formMode === 'add' ? 'Simpan Galeri' : 'Simpan Perubahan'}
               </button>

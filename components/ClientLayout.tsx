@@ -128,18 +128,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const visibleMasterLinks = masterLinks.filter((link) => canRead(link.module));
 
   return (
-    <div className="min-h-screen h-[100dvh] overflow-hidden bg-slate-900 md:flex">
-      <div className="md:hidden fixed left-0 top-0 w-full h-16 bg-slate-800 border-b border-white/10 flex items-center justify-between px-4 z-40 shadow-sm">
+    <div className="min-h-screen h-[100dvh] overflow-hidden bg-slate-100 md:flex">
+      <div className="md:hidden fixed left-0 top-0 w-full h-16 bg-white border-b border-white/10 flex items-center justify-between px-4 z-40 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded flex items-center justify-center p-1">
             <Image src="/logorcis.png" alt="RCIS Logo" width={32} height={32} className="object-contain" priority />
           </div>
-          <span className="font-bold text-slate-50 text-lg tracking-tight">RCIS</span>
+          <span className="font-bold text-slate-900 text-lg tracking-tight">RCIS</span>
         </div>
         <div className="flex items-center gap-3">
           {user && (
             <div className="text-right">
-              <div className="text-sm font-semibold text-slate-100">{user.nama}</div>
+              <div className="text-sm font-semibold text-slate-800">{user.nama}</div>
               <div className="text-xs text-sky-400">{user.nip ?? user.username}</div>
             </div>
           )}
@@ -147,7 +147,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             type="button"
             aria-label="Buka menu navigasi"
             onClick={() => setIsMobileOpen(true)}
-            className="text-slate-300 hover:text-white p-2 bg-white/5 rounded-lg border border-white/10 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+            className="text-slate-700 hover:text-white p-2 bg-white/5 rounded-lg border border-white/10 active:scale-95 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
           >
             <Menu size={20} />
           </button>
@@ -155,7 +155,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       </div>
 
       <aside className={`
-        fixed md:relative top-0 left-0 h-screen h-[100dvh] shrink-0 bg-slate-800 border-r border-white/10 z-50 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
+        fixed md:relative top-0 left-0 h-screen h-[100dvh] shrink-0 bg-white border-r border-white/10 z-50 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         ${isCollapsed ? 'md:w-[88px] w-[260px]' : 'md:w-[260px] w-[260px]'}
       `}>
@@ -164,7 +164,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               type="button"
               aria-label="Tutup menu navigasi"
               onClick={() => setIsMobileOpen(false)}
-              className="text-slate-400 hover:text-white p-1.5 bg-slate-900/50 rounded-lg backdrop-blur-sm border border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+              className="text-slate-600 hover:text-white p-1.5 bg-slate-50/50 rounded-lg backdrop-blur-sm border border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
             >
                 <X size={20} />
             </button>
@@ -187,20 +187,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 className={`
                   flex items-center gap-3 py-3 rounded-lg text-sm font-semibold transition-colors relative group
                   ${isCollapsed ? 'md:justify-center md:px-0 px-4' : 'px-4'}
-                  ${isActive ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[inset_0_0_12px_rgba(14,165,233,0.1)]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'}
+                  ${isActive ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20 shadow-[inset_0_0_12px_rgba(14,165,233,0.1)]' : 'text-slate-600 hover:text-slate-800 hover:bg-white/5 border border-transparent'}
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800
                 `}
               >
-                <link.icon size={20} className={`shrink-0 ${isActive ? 'text-sky-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                <link.icon size={20} className={`shrink-0 ${isActive ? 'text-sky-400' : 'text-slate-500 group-hover:text-slate-700'}`} />
                 <span className={`truncate transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0 md:hidden block' : 'w-auto opacity-100'}`}>
                   {link.label}
                 </span>
 
                 {/* Tooltip for collapsed state */}
                 {isCollapsed && (
-                    <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-700 text-slate-100 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                    <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-100 text-slate-800 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
                         {link.label}
-                        <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-700 rotate-45 border-l border-b border-white/10"></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-100 rotate-45 border-l border-b border-white/10"></div>
                     </div>
                 )}
               </Link>
@@ -223,20 +223,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 className={`
                   flex items-center gap-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative group
                   ${isCollapsed ? 'md:justify-center md:px-0 px-4' : 'px-4'}
-                  ${isActive ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[inset_0_0_12px_rgba(99,102,241,0.1)]' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'}
+                  ${isActive ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[inset_0_0_12px_rgba(99,102,241,0.1)]' : 'text-slate-600 hover:text-slate-800 hover:bg-white/5 border border-transparent'}
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800
                 `}
               >
-                <link.icon size={18} className={`shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                <link.icon size={18} className={`shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-700'}`} />
                 <span className={`truncate transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0 md:hidden block' : 'w-auto opacity-100'}`}>
                   {link.label}
                 </span>
 
                 {/* Tooltip for collapsed state */}
                 {isCollapsed && (
-                    <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-700 text-slate-100 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                    <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-100 text-slate-800 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
                         {link.label}
-                        <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-700 rotate-45 border-l border-b border-white/10"></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-100 rotate-45 border-l border-b border-white/10"></div>
                     </div>
                 )}
               </Link>
@@ -262,9 +262,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
               {/* Tooltip for collapsed state */}
               {isCollapsed && (
-                <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-700 text-slate-100 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                <div className="hidden md:block absolute left-full ml-4 px-3 py-1.5 bg-slate-100 text-slate-800 text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-white/10 shadow-xl">
                   Logout
-                  <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-700 rotate-45 border-l border-b border-white/10"></div>
+                  <div className="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 bg-slate-100 rotate-45 border-l border-b border-white/10"></div>
                 </div>
               )}
             </button>
@@ -277,7 +277,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
              type="button"
              aria-label={isCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
              onClick={() => setIsCollapsed(!isCollapsed)} 
-             className="w-full flex items-center justify-center py-2 px-3 bg-slate-900/50 hover:bg-slate-900 text-slate-400 hover:text-slate-200 rounded-lg border border-white/5 hover:border-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+             className="w-full flex items-center justify-center py-2 px-3 bg-slate-50/50 hover:bg-slate-50 text-slate-600 hover:text-slate-800 rounded-lg border border-white/5 hover:border-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
            >
               {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
            </button>
@@ -292,7 +292,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         onClick={() => setIsMobileOpen(false)}
       />
 
-      <div className="relative flex min-h-0 flex-1 flex-col h-screen h-[100dvh] overflow-hidden bg-slate-900 pt-16 md:pt-0 transition-all duration-300 min-w-0">
+      <div className="relative flex min-h-0 flex-1 flex-col h-screen h-[100dvh] overflow-hidden bg-slate-100 pt-16 md:pt-0 transition-all duration-300 min-w-0">
         {children}
       </div>
     </div>

@@ -278,7 +278,7 @@ export default function HandoverClient({
     }
 
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-slate-800 text-slate-500 text-xs font-medium">
+      <div className="absolute inset-0 flex items-center justify-center bg-white text-slate-500 text-xs font-medium">
         {label} belum tersedia
       </div>
     );
@@ -298,29 +298,29 @@ export default function HandoverClient({
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
-        <div className="xl:col-span-3 bg-slate-800 rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden min-h-[500px]">
-          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-800/80 shrink-0 gap-4 flex-wrap">
+        <div className="xl:col-span-3 bg-white rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden min-h-[500px] shadow-md">
+          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/80 shrink-0 gap-4 flex-wrap">
             <div className="relative max-w-xl w-full flex-1 min-w-[220px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
               <input
                 type="text"
                 placeholder="Cari kode, kegiatan, stasiun, DAOP, penyerah, atau penerima..."
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                className="w-full bg-slate-900 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm focus:shadow-md transition-shadow duration-200"
               />
             </div>
-            <div className="flex gap-1 bg-slate-900 border border-white/10 p-1 rounded-lg">
+            <div className="flex gap-1 bg-slate-50 border border-white/10 p-1 rounded-lg">
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 rounded-md text-sm ${viewMode === 'table' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`p-1.5 rounded-md text-sm ${viewMode === 'table' ? 'bg-white text-sky-400 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                 title="Table View"
               >
                 <List size={16} />
               </button>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-md text-sm ${viewMode === 'grid' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`p-1.5 rounded-md text-sm ${viewMode === 'grid' ? 'bg-white text-sky-400 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                 title="Grid View"
               >
                 <LayoutGrid size={16} />
@@ -329,24 +329,24 @@ export default function HandoverClient({
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
-            {isPending && <div className="absolute inset-0 z-10 bg-slate-900/40" />}
+            {isPending && <div className="absolute inset-0 z-10 bg-slate-50/40" />}
 
             {filteredData.length === 0 ? (
               <div className="h-full flex items-center justify-center text-slate-500">Data serah terima tidak ditemukan.</div>
             ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredData.map((item) => (
-                  <article key={item.id} className="bg-slate-900 border border-white/10 rounded-xl overflow-hidden flex flex-col group">
+                  <article key={item.id} className="bg-slate-50 border border-white/10 rounded-xl overflow-hidden flex flex-col group shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex gap-1 p-1 shrink-0">
-                      <div className="w-1/2 aspect-video relative rounded-tl-lg rounded-bl-sm overflow-hidden bg-slate-800">
+                      <div className="w-1/2 aspect-video relative rounded-tl-lg rounded-bl-sm overflow-hidden bg-white">
                         {renderHandoverImage(item.fotoSerahTerima, 'Foto serah terima')}
-                        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded text-[10px] font-medium text-slate-300 pointer-events-none">
+                        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded text-[10px] font-medium text-slate-700 pointer-events-none">
                           Foto Serah Terima
                         </div>
                       </div>
-                      <div className="w-1/2 aspect-video relative rounded-tr-lg rounded-br-sm overflow-hidden bg-slate-800">
+                      <div className="w-1/2 aspect-video relative rounded-tr-lg rounded-br-sm overflow-hidden bg-white">
                         {renderHandoverImage(item.fotoBukti, 'Foto bukti checklist')}
-                        <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded text-[10px] font-medium text-slate-300 pointer-events-none">
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded text-[10px] font-medium text-slate-700 pointer-events-none">
                           Foto Bukti
                         </div>
                       </div>
@@ -358,7 +358,7 @@ export default function HandoverClient({
                           <div className="bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest font-mono mb-2 inline-block">
                             {item.kode}
                           </div>
-                          <h3 className="font-bold text-slate-200 line-clamp-2">
+                          <h3 className="font-bold text-slate-800 line-clamp-2">
                             {item.namaKegiatanDari}
                           </h3>
                           <div className="flex items-center gap-2 text-slate-500 text-xs mt-1">
@@ -371,7 +371,7 @@ export default function HandoverClient({
                             <button
                               onClick={() => handleOpenEdit(item)}
                               disabled={isPending}
-                              className="text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 p-1.5 rounded-md border border-transparent hover:border-sky-400/20 disabled:opacity-50"
+                              className="text-slate-600 hover:text-sky-400 hover:bg-sky-400/10 p-1.5 rounded-md border border-transparent hover:border-sky-400/20 disabled:opacity-50"
                             >
                               <Edit2 size={14} />
                             </button>
@@ -380,7 +380,7 @@ export default function HandoverClient({
                             <button
                               onClick={() => handleDelete(item.id)}
                               disabled={isPending}
-                              className="text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 p-1.5 rounded-md border border-transparent hover:border-rose-400/20 disabled:opacity-50"
+                              className="text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 p-1.5 rounded-md border border-transparent hover:border-rose-400/20 disabled:opacity-50"
                             >
                               <Trash2 size={14} />
                             </button>
@@ -391,18 +391,18 @@ export default function HandoverClient({
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                           <div className="text-slate-500 uppercase tracking-widest text-[10px] mb-1">Asal</div>
-                          <div className="text-slate-200 font-semibold line-clamp-1">{item.wilayahDaopAsalNama}</div>
-                          <div className="text-slate-400 mt-1">{formatDateIndonesia(item.tanggalKegiatanAsal)}</div>
+                          <div className="text-slate-800 font-semibold line-clamp-1">{item.wilayahDaopAsalNama}</div>
+                          <div className="text-slate-600 mt-1">{formatDateIndonesia(item.tanggalKegiatanAsal)}</div>
                         </div>
                         <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                           <div className="text-slate-500 uppercase tracking-widest text-[10px] mb-1">Tujuan</div>
-                          <div className="text-slate-200 font-semibold line-clamp-1">{item.wilayahDaopKeNama}</div>
-                          <div className="text-slate-400 mt-1">{formatDateIndonesia(item.tanggalKegiatanKe)}</div>
+                          <div className="text-slate-800 font-semibold line-clamp-1">{item.wilayahDaopKeNama}</div>
+                          <div className="text-slate-600 mt-1">{formatDateIndonesia(item.tanggalKegiatanKe)}</div>
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-white/10 bg-slate-950/40 p-3 text-sm text-slate-300">
-                        <div className="flex items-center gap-2 text-slate-400 mb-2">
+                      <div className="rounded-lg border border-white/10 bg-white/40 p-3 text-sm text-slate-700">
+                        <div className="flex items-center gap-2 text-slate-600 mb-2">
                           <MapPin size={14} />
                           <span>Lokasi serah terima</span>
                         </div>
@@ -415,13 +415,13 @@ export default function HandoverClient({
                       <div className="flex items-center gap-2 mt-auto">
                         <div className="flex-1 bg-white/5 border border-white/5 rounded-lg p-2 flex flex-col items-center text-center">
                           <span className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">Penyerah</span>
-                          <span className="text-xs font-semibold text-slate-300 line-clamp-1">{item.namaPenyerah}</span>
+                          <span className="text-xs font-semibold text-slate-700 line-clamp-1">{item.namaPenyerah}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5">NIPP. {item.nippPenyerah}</span>
                         </div>
                         <ArrowRight size={16} className="text-slate-500 shrink-0" />
                         <div className="flex-1 bg-white/5 border border-white/5 rounded-lg p-2 flex flex-col items-center text-center">
                           <span className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">Penerima</span>
-                          <span className="text-xs font-semibold text-slate-300 line-clamp-1">{item.namaPenerima}</span>
+                          <span className="text-xs font-semibold text-slate-700 line-clamp-1">{item.namaPenerima}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5">NIPP. {item.nippPenerima}</span>
                         </div>
                       </div>
@@ -433,15 +433,15 @@ export default function HandoverClient({
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[1180px] text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/10 bg-slate-900/50">
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">No. BAST</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Alur Kegiatan</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Wilayah</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Lokasi</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Serah Terima</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Penyerah</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Penerima</th>
-                      <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold text-right">Aksi</th>
+                    <tr className="border-b border-white/10 bg-slate-50/50">
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">No. BAST</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Alur Kegiatan</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Wilayah</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Lokasi</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Serah Terima</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Penyerah</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Penerima</th>
+                      <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold text-right">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -451,7 +451,7 @@ export default function HandoverClient({
                           <div className="font-mono text-sky-400 text-sm">{item.kode}</div>
                         </td>
                         <td className="py-3 px-4">
-                          <div className="text-sm font-semibold text-slate-200">{item.namaKegiatanDari}</div>
+                          <div className="text-sm font-semibold text-slate-800">{item.namaKegiatanDari}</div>
                           <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
                             <ArrowRight size={12} />
                             <span>{item.namaKegiatanKe}</span>
@@ -460,27 +460,27 @@ export default function HandoverClient({
                             {formatDateIndonesia(item.tanggalKegiatanAsal)} - {formatDateIndonesia(item.tanggalKegiatanKe)}
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-slate-300">
+                        <td className="py-3 px-4 text-sm text-slate-700">
                           <div>{item.wilayahDaopAsalNama}</div>
                           <div className="text-xs text-slate-500 mt-1">ke {item.wilayahDaopKeNama}</div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-slate-300">
+                        <td className="py-3 px-4 text-sm text-slate-700">
                           <div className="flex items-start gap-2">
                             <MapPin size={14} className="text-slate-500 mt-0.5 shrink-0" />
                             <span>{item.lokasiStasiun}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-slate-300">
+                        <td className="py-3 px-4 text-sm text-slate-700">
                           <div className="flex items-center gap-2">
                             <Calendar size={14} className="text-slate-500" />
                             <span>{formatDateIndonesia(item.tanggalSerahTerima)}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-slate-300">
+                        <td className="py-3 px-4 text-sm text-slate-700">
                           <div className="font-medium">{item.namaPenyerah}</div>
                           <div className="text-xs text-slate-500 mt-1 font-mono">{item.nippPenyerah}</div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-slate-300">
+                        <td className="py-3 px-4 text-sm text-slate-700">
                           <div className="font-medium">{item.namaPenerima}</div>
                           <div className="text-xs text-slate-500 mt-1 font-mono">{item.nippPenerima}</div>
                         </td>
@@ -490,7 +490,7 @@ export default function HandoverClient({
                               <button
                                 onClick={() => handleOpenEdit(item)}
                                 disabled={isPending}
-                                className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50"
+                                className="p-1.5 text-slate-600 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50"
                               >
                                 <Edit2 size={16} />
                               </button>
@@ -499,7 +499,7 @@ export default function HandoverClient({
                               <button
                                 onClick={() => handleDelete(item.id)}
                                 disabled={isPending}
-                                className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50"
+                                className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50"
                               >
                                 <Trash2 size={16} />
                               </button>
@@ -515,21 +515,21 @@ export default function HandoverClient({
           </div>
         </div>
 
-        <aside className="bg-slate-800 rounded-2xl border border-white/10 p-5 flex flex-col gap-4">
-          <div className="text-sm font-semibold text-slate-200">Ringkasan Handover</div>
+        <aside className="bg-white rounded-2xl border border-white/10 p-5 flex flex-col gap-4 shadow-md">
+          <div className="text-sm font-semibold text-slate-800">Ringkasan Handover</div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Total</div>
-              <div className="text-2xl font-semibold text-slate-100">{data.length}</div>
+              <div className="text-2xl font-semibold text-slate-800">{data.length}</div>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <div className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-2">Terfilter</div>
-              <div className="text-2xl font-semibold text-slate-100">{filteredData.length}</div>
+              <div className="text-2xl font-semibold text-slate-800">{filteredData.length}</div>
             </div>
           </div>
-          <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 text-sm text-slate-300">
+          <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 text-sm text-slate-700">
             <div className="font-semibold text-sky-400 mb-2">Format & aturan</div>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-2 text-sm text-slate-700">
               <li>Semua field tanggal menggunakan date picker.</li>
               <li>Tanggal kegiatan tujuan tidak boleh sama dengan tanggal kegiatan asal.</li>
               <li>Penyerah dan penerima diambil dari referensi user aktif.</li>
@@ -541,13 +541,13 @@ export default function HandoverClient({
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSave} className="bg-slate-800 border border-white/10 w-full max-w-6xl rounded-2xl shadow-2xl flex flex-col max-h-[92vh]">
+          <form onSubmit={handleSave} className="bg-white border border-white/10 w-full max-w-6xl rounded-2xl shadow-2xl flex flex-col max-h-[92vh]">
             <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
               <div>
-                <h2 className="text-lg font-bold text-slate-50">
+                <h2 className="text-lg font-bold text-slate-900">
                   {formMode === 'add' ? 'Catat Serah Terima Baru' : 'Edit Serah Terima'}
                 </h2>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-slate-600 mt-1">
                   Form mengikuti alur kegiatan asal ke kegiatan tujuan tanpa memutus kompatibilitas data lama.
                 </p>
               </div>
@@ -555,7 +555,7 @@ export default function HandoverClient({
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={isPending || isUploading}
-                className="text-slate-400 hover:text-slate-200"
+                className="text-slate-600 hover:text-slate-800"
               >
                 <X size={20} />
               </button>
@@ -563,13 +563,13 @@ export default function HandoverClient({
 
             <div className="p-6 overflow-y-auto flex flex-col gap-6 flex-1 custom-scrollbar">
               <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <div className="bg-slate-900/50 p-5 rounded-xl border border-white/5 space-y-4">
+                <div className="bg-slate-50/50 p-5 rounded-xl border border-white/5 space-y-4">
                   <div className="flex items-center gap-2 text-sky-400 font-semibold">
                     <ArrowRight size={16} />
                     <span>Kegiatan Asal</span>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Nama Kegiatan Dari <span className="text-rose-400">*</span></label>
+                    <label className="text-sm font-medium text-slate-700">Nama Kegiatan Dari <span className="text-rose-400">*</span></label>
                     <input
                       required
                       value={namaKegiatanDari}
@@ -577,29 +577,29 @@ export default function HandoverClient({
                       disabled={isPending || isUploading}
                       type="text"
                       placeholder="Contoh: Rail Clinic Stasiun Banjar"
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                      className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-300">Tanggal Kegiatan Asal <span className="text-rose-400">*</span></label>
+                      <label className="text-sm font-medium text-slate-700">Tanggal Kegiatan Asal <span className="text-rose-400">*</span></label>
                       <input
                         required
                         value={tanggalKegiatanAsal}
                         onChange={(event) => setTanggalKegiatanAsal(event.target.value)}
                         disabled={isPending || isUploading}
                         type="date"
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50"
+                        className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-300">Wilayah DAOP Asal <span className="text-rose-400">*</span></label>
+                      <label className="text-sm font-medium text-slate-700">Wilayah DAOP Asal <span className="text-rose-400">*</span></label>
                       <select
                         required
                         value={wilayahDaopAsal}
                         onChange={(event) => setWilayahDaopAsal(event.target.value)}
                         disabled={isPending || isUploading}
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                        className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                       >
                         <option value="">Pilih wilayah asal</option>
                         {daopOptions.map((option) => (
@@ -612,13 +612,13 @@ export default function HandoverClient({
                   </div>
                 </div>
 
-                <div className="bg-slate-900/50 p-5 rounded-xl border border-white/5 space-y-4">
+                <div className="bg-slate-50/50 p-5 rounded-xl border border-white/5 space-y-4">
                   <div className="flex items-center gap-2 text-emerald-400 font-semibold">
                     <MapPin size={16} />
                     <span>Kegiatan Tujuan</span>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Nama Kegiatan Ke <span className="text-rose-400">*</span></label>
+                    <label className="text-sm font-medium text-slate-700">Nama Kegiatan Ke <span className="text-rose-400">*</span></label>
                     <input
                       required
                       value={namaKegiatanKe}
@@ -626,29 +626,29 @@ export default function HandoverClient({
                       disabled={isPending || isUploading}
                       type="text"
                       placeholder="Contoh: Rail Clinic Stasiun Kroya"
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+                      className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-300">Tanggal Kegiatan Ke <span className="text-rose-400">*</span></label>
+                      <label className="text-sm font-medium text-slate-700">Tanggal Kegiatan Ke <span className="text-rose-400">*</span></label>
                       <input
                         required
                         value={tanggalKegiatanKe}
                         onChange={(event) => setTanggalKegiatanKe(event.target.value)}
                         disabled={isPending || isUploading}
                         type="date"
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 [color-scheme:dark] disabled:opacity-50"
+                        className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-300">Wilayah DAOP Tujuan <span className="text-rose-400">*</span></label>
+                      <label className="text-sm font-medium text-slate-700">Wilayah DAOP Tujuan <span className="text-rose-400">*</span></label>
                       <select
                         required
                         value={wilayahDaopKe}
                         onChange={(event) => setWilayahDaopKe(event.target.value)}
                         disabled={isPending || isUploading}
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+                        className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                       >
                         <option value="">Pilih wilayah tujuan</option>
                         {daopOptions.map((option) => (
@@ -664,7 +664,7 @@ export default function HandoverClient({
 
               <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
                 <div className="xl:col-span-2 space-y-1.5">
-                  <label className="text-sm font-medium text-slate-300">Lokasi Stasiun <span className="text-rose-400">*</span></label>
+                  <label className="text-sm font-medium text-slate-700">Lokasi Stasiun <span className="text-rose-400">*</span></label>
                   <input
                     required
                     value={lokasiStasiun}
@@ -672,36 +672,36 @@ export default function HandoverClient({
                     disabled={isPending || isUploading}
                     type="text"
                     placeholder="Contoh: Stasiun Wates"
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-300">Tanggal Serah Terima <span className="text-rose-400">*</span></label>
+                  <label className="text-sm font-medium text-slate-700">Tanggal Serah Terima <span className="text-rose-400">*</span></label>
                   <input
                     required
                     value={tanggalSerahTerima}
                     onChange={(event) => setTanggalSerahTerima(event.target.value)}
                     disabled={isPending || isUploading}
                     type="date"
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                   />
                 </div>
               </section>
 
               <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <div className="bg-slate-900/50 p-5 rounded-xl border border-white/5 space-y-4">
+                <div className="bg-slate-50/50 p-5 rounded-xl border border-white/5 space-y-4">
                   <div className="text-sm font-semibold text-sky-400 flex items-center gap-2">
                     <UserCheck size={16} />
                     <span>Penyerah</span>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">NIPP Penyerah <span className="text-rose-400">*</span></label>
+                    <label className="text-sm font-medium text-slate-700">NIPP Penyerah <span className="text-rose-400">*</span></label>
                     <select
                       required
                       value={nippPenyerah}
                       onChange={(event) => handleSelectPenyerah(event.target.value)}
                       disabled={isPending || isUploading}
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                      className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                     >
                       <option value="">Pilih user penyerah</option>
                       {userOptions.map((option) => (
@@ -712,29 +712,29 @@ export default function HandoverClient({
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Nama Penyerah</label>
+                    <label className="text-sm font-medium text-slate-700">Nama Penyerah</label>
                     <input
                       value={namaPenyerah}
                       readOnly
                       type="text"
-                      className="w-full bg-slate-800/70 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-300 cursor-not-allowed"
+                      className="w-full bg-white/70 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-700 cursor-not-allowed"
                     />
                   </div>
                 </div>
 
-                <div className="bg-slate-900/50 p-5 rounded-xl border border-white/5 space-y-4">
+                <div className="bg-slate-50/50 p-5 rounded-xl border border-white/5 space-y-4">
                   <div className="text-sm font-semibold text-emerald-400 flex items-center gap-2">
                     <UserCheck size={16} />
                     <span>Penerima</span>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">NIPP Penerima <span className="text-rose-400">*</span></label>
+                    <label className="text-sm font-medium text-slate-700">NIPP Penerima <span className="text-rose-400">*</span></label>
                     <select
                       required
                       value={nippPenerima}
                       onChange={(event) => handleSelectPenerima(event.target.value)}
                       disabled={isPending || isUploading}
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+                      className="w-full bg-white border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-emerald-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                     >
                       <option value="">Pilih user penerima</option>
                       {userOptions.map((option) => (
@@ -745,26 +745,26 @@ export default function HandoverClient({
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Nama Penerima</label>
+                    <label className="text-sm font-medium text-slate-700">Nama Penerima</label>
                     <input
                       value={namaPenerima}
                       readOnly
                       type="text"
-                      className="w-full bg-slate-800/70 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-300 cursor-not-allowed"
+                      className="w-full bg-white/70 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-700 cursor-not-allowed"
                     />
                   </div>
                 </div>
               </section>
 
               <section className="space-y-1.5">
-                <label className="text-sm font-medium text-slate-300">Keterangan</label>
+                <label className="text-sm font-medium text-slate-700">Keterangan</label>
                 <textarea
                   value={keterangan}
                   onChange={(event) => setKeterangan(event.target.value)}
                   disabled={isPending || isUploading}
                   rows={3}
                   placeholder="Deskripsi kegiatan, catatan checklist, atau keterangan penting lainnya."
-                  className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+                  className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"
                 />
               </section>
 
@@ -782,12 +782,12 @@ export default function HandoverClient({
                   />
                   <div
                     onClick={() => fileInputSerahTerima.current?.click()}
-                    className={`border-2 border-dashed rounded-xl bg-slate-900/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${fotoSerahTerimaFile ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}
+                    className={`border-2 border-dashed rounded-xl bg-slate-50/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${fotoSerahTerimaFile ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${fotoSerahTerimaFile ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-400 group-hover:text-sky-400'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${fotoSerahTerimaFile ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-600 group-hover:text-sky-400'}`}>
                       {fotoSerahTerimaFile ? <CheckCircle2 size={18} /> : <Upload size={18} />}
                     </div>
-                    <div className="text-sm font-medium text-slate-300 mb-1">
+                    <div className="text-sm font-medium text-slate-700 mb-1">
                       Foto Serah Terima {formMode === 'add' && <span className="text-rose-400">*</span>}
                     </div>
                     <div className="text-xs text-sky-400 font-mono truncate max-w-[220px]">
@@ -804,12 +804,12 @@ export default function HandoverClient({
                   />
                   <div
                     onClick={() => fileInputBukti.current?.click()}
-                    className={`border-2 border-dashed rounded-xl bg-slate-900/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${fotoBuktiFile ? 'border-emerald-500/50 hover:border-emerald-400' : 'border-white/10 hover:border-emerald-500/50'}`}
+                    className={`border-2 border-dashed rounded-xl bg-slate-50/50 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${fotoBuktiFile ? 'border-emerald-500/50 hover:border-emerald-400' : 'border-white/10 hover:border-emerald-500/50'}`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${fotoBuktiFile ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-400 group-hover:text-emerald-400'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-3 ${fotoBuktiFile ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-600 group-hover:text-emerald-400'}`}>
                       {fotoBuktiFile ? <CheckCircle2 size={18} /> : <Upload size={18} />}
                     </div>
-                    <div className="text-sm font-medium text-slate-300 mb-1">
+                    <div className="text-sm font-medium text-slate-700 mb-1">
                       Foto Bukti Checklist {formMode === 'add' && <span className="text-rose-400">*</span>}
                     </div>
                     <div className="text-xs text-emerald-400 font-mono truncate max-w-[220px]">
@@ -820,12 +820,12 @@ export default function HandoverClient({
               </section>
             </div>
 
-            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-slate-800/80 rounded-b-2xl">
+            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-white/80 rounded-b-2xl">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={isPending || isUploading}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/5 disabled:opacity-50"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-white/5 disabled:opacity-50"
               >
                 Batal
               </button>

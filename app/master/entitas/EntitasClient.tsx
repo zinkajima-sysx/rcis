@@ -80,16 +80,16 @@ export default function EntitasClient({ initialData }: { initialData: any[] }) {
         </button>
       </div>
 
-      <div className="bg-slate-800 rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden">
-        <div className="p-4 border-b border-white/10 bg-slate-800/80 shrink-0">
+      <div className="bg-white rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden shadow-md">
+        <div className="p-4 border-b border-white/10 bg-white/80 shrink-0">
           <div className="relative max-w-sm w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
             <input 
               type="text" 
               placeholder="Cari nama entitas atau jenis..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 "
+              className="w-full bg-slate-50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm focus:shadow-md transition-shadow duration-200"
             />
           </div>
         </div>
@@ -97,23 +97,23 @@ export default function EntitasClient({ initialData }: { initialData: any[] }) {
         <div className="overflow-x-auto w-full flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="border-b border-white/10 bg-slate-800/50">
-                <th className="py-4 px-5 text-xs text-slate-400 uppercase tracking-wider font-semibold w-24">Kode</th>
-                <th className="py-4 px-5 text-xs text-slate-400 uppercase tracking-wider font-semibold">Nama Entitas</th>
-                <th className="py-4 px-5 text-xs text-slate-400 uppercase tracking-wider font-semibold text-right">Aksi</th>
+              <tr className="border-b border-white/10 bg-white/50">
+                <th className="py-4 px-5 text-xs text-slate-600 uppercase tracking-wider font-semibold w-24">Kode</th>
+                <th className="py-4 px-5 text-xs text-slate-600 uppercase tracking-wider font-semibold">Nama Entitas</th>
+                <th className="py-4 px-5 text-xs text-slate-600 uppercase tracking-wider font-semibold text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {filteredData.length > 0 ? filteredData.map((d) => (
                 <tr key={d.id} className="hover:bg-white/5 group">
                   <td className="py-3 px-5 text-sm font-mono text-sky-400">{d.kode}</td>
-                  <td className="py-3 px-5 text-sm font-semibold text-slate-200">{d.nama}</td>
+                  <td className="py-3 px-5 text-sm font-semibold text-slate-800">{d.nama}</td>
                   <td className="py-3 px-5 text-right">
                     <div className="flex justify-end gap-2">
-                       <button onClick={() => handleOpenEdit(d)} disabled={isPending} className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50">
+                       <button onClick={() => handleOpenEdit(d)} disabled={isPending} className="p-1.5 text-slate-600 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50">
                          <Edit2 size={16} />
                        </button>
-                       <button onClick={() => handleDelete(d.id)} disabled={isPending} className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50">
+                       <button onClick={() => handleDelete(d.id)} disabled={isPending} className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50">
                          <Trash2 size={16} />
                        </button>
                     </div>
@@ -129,13 +129,13 @@ export default function EntitasClient({ initialData }: { initialData: any[] }) {
 
       {isFormOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSave} className="bg-slate-800 border border-white/10 w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
-            <div className="p-5 border-b border-white/10 flex justify-between items-center bg-slate-800 shrink-0 rounded-t-2xl">
-              <h2 className="text-lg font-bold text-slate-50">{formMode === 'add' ? 'Tambah Entitas' : 'Edit Entitas'}</h2>
-              <button type="button" onClick={() => setIsFormOpen(false)} disabled={isPending} className="text-slate-400 hover:text-white p-1 rounded-md"><X size={18} /></button>
+          <form onSubmit={handleSave} className="bg-white border border-white/10 w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
+            <div className="p-5 border-b border-white/10 flex justify-between items-center bg-white shrink-0 rounded-t-2xl">
+              <h2 className="text-lg font-bold text-slate-900">{formMode === 'add' ? 'Tambah Entitas' : 'Edit Entitas'}</h2>
+              <button type="button" onClick={() => setIsFormOpen(false)} disabled={isPending} className="text-slate-600 hover:text-white p-1 rounded-md"><X size={18} /></button>
             </div>
             
-            <div className="p-6 bg-slate-900/50 flex flex-col gap-4">
+            <div className="p-6 bg-slate-50/50 flex flex-col gap-4">
               {error && (
                 <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl text-sm flex gap-3 items-start">
                    <AlertCircle className="shrink-0 mt-0.5" size={16} />
@@ -143,13 +143,13 @@ export default function EntitasClient({ initialData }: { initialData: any[] }) {
                 </div>
               )}
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Nama Entitas <span className="text-rose-400">*</span></label>
-                <input required type="text" value={formData.entitas} disabled={isPending} onChange={e => setFormData({...formData, entitas: e.target.value})} placeholder="Contoh: Manager Unit" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                <label className="text-sm font-medium text-slate-700">Nama Entitas <span className="text-rose-400">*</span></label>
+                <input required type="text" value={formData.entitas} disabled={isPending} onChange={e => setFormData({...formData, entitas: e.target.value})} placeholder="Contoh: Manager Unit" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
               </div>
             </div>
             
-            <div className="p-5 border-t border-white/10 flex justify-end gap-3 bg-slate-800 rounded-b-2xl">
-              <button type="button" disabled={isPending} onClick={() => setIsFormOpen(false)} className="px-5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/5 disabled:opacity-50">Batal</button>
+            <div className="p-5 border-t border-white/10 flex justify-end gap-3 bg-white rounded-b-2xl">
+              <button type="button" disabled={isPending} onClick={() => setIsFormOpen(false)} className="px-5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-white/5 disabled:opacity-50">Batal</button>
               <button type="submit" disabled={isPending} className="px-6 py-2 rounded-lg text-sm font-semibold bg-sky-500 text-slate-950 hover:bg-sky-600 shadow-sm flex items-center justify-center disabled:opacity-50">
                   {isPending ? 'Menyimpan...' : 'Simpan'}
               </button>

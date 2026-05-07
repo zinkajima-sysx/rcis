@@ -81,7 +81,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
   }, [data]);
 
   const getBadgeStyle = (kond: string) => {
-     if(!kond) return 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
+     if(!kond) return 'bg-slate-300/10 text-slate-600 border border-slate-400/20';
      if(kond.includes('Layak') || kond.includes('Baik')) return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
      if(kond.includes('Rusak') || kond.includes('Buruk')) return 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
      return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
@@ -113,7 +113,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
     if (daysUntil === null) {
       return {
         label: 'Belum diatur',
-        className: 'bg-slate-500/10 text-slate-400 border border-slate-500/20',
+        className: 'bg-slate-300/10 text-slate-600 border border-slate-400/20',
       };
     }
 
@@ -246,7 +246,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
   return (
     <>
       <div className="flex justify-end -mt-14 mb-4 relative z-10 gap-3">
-        <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg font-semibold text-sm border border-white/10 flex items-center gap-2">
+        <button className="bg-white hover:bg-slate-100 text-slate-800 px-4 py-2 rounded-lg font-semibold text-sm border border-white/10 flex items-center gap-2">
           <Download size={16} /> Export
         </button>
         {permissions.c && (
@@ -259,39 +259,39 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
         )}
       </div>
 
-      <div className="bg-slate-800 rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden min-h-[400px]">
+      <div className="bg-white rounded-2xl border border-white/10 flex flex-col flex-1 overflow-hidden min-h-[400px] shadow-md">
         {/* Toolbar */}
-        <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-800/80 shrink-0 gap-4 flex-wrap">
+        <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/80 shrink-0 gap-4 flex-wrap">
           <div className="relative max-w-sm w-full flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
             <input 
               type="text" 
               placeholder="Cari nama alat, kode..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 "
+              className="w-full bg-slate-50 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-sm focus:shadow-md transition-shadow duration-200"
             />
           </div>
           <div className="flex items-center gap-4">
             <div className="flex gap-2">
-              <button className="bg-slate-900 border border-white/10 text-slate-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-white/5 ">
+              <button className="bg-slate-50 border border-white/10 text-slate-700 px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-white/5 ">
                 <Filter size={16} /> Kategori
               </button>
-              <button className="bg-slate-900 border border-white/10 text-slate-300 px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-white/5 ">
+              <button className="bg-slate-50 border border-white/10 text-slate-700 px-3 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-white/5 ">
                 <Filter size={16} /> Status
               </button>
             </div>
             {/* View Toggle */}
-            <div className="flex gap-1 bg-slate-900 border border-white/10 p-1 rounded-lg">
+            <div className="flex gap-1 bg-slate-50 border border-white/10 p-1 rounded-lg">
               <button 
                 onClick={() => setViewMode('table')} 
-                className={`p-1.5 rounded-md text-sm ${viewMode === 'table' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`p-1.5 rounded-md text-sm ${viewMode === 'table' ? 'bg-white text-sky-400 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
               >
                 <List size={16} />
               </button>
               <button 
                 onClick={() => setViewMode('grid')} 
-                className={`p-1.5 rounded-md text-sm ${viewMode === 'grid' ? 'bg-slate-800 text-sky-400 shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`p-1.5 rounded-md text-sm ${viewMode === 'grid' ? 'bg-white text-sky-400 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
               >
                 <LayoutGrid size={16} />
               </button>
@@ -299,7 +299,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
           </div>
         </div>
 
-        <div className="px-4 py-3 border-b border-white/5 bg-slate-900/30 grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+        <div className="px-4 py-3 border-b border-white/5 bg-slate-50/30 grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
           <div className="rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
             <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Mendekati Kalibrasi</div>
             <div className="text-lg font-bold text-amber-400 mt-1 flex items-center gap-2">
@@ -320,13 +320,13 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
           </div>
           <div className="rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
             <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Tanpa Kalibrasi</div>
-            <div className="text-lg font-bold text-slate-300 mt-1">{calibrationSummary.withoutCalibration}</div>
+            <div className="text-lg font-bold text-slate-700 mt-1">{calibrationSummary.withoutCalibration}</div>
           </div>
         </div>
 
         {/* Dynamic Content Area */}
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
-          {isPending && <div className="absolute inset-0 z-10 bg-slate-900/40" />}
+          {isPending && <div className="absolute inset-0 z-10 bg-slate-50/40" />}
           
           {filteredData.length === 0 ? (
             <div className="h-full flex items-center justify-center text-slate-500">Data alat kesehatan tidak ditemukan.</div>
@@ -336,37 +336,37 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                 const calibrationBadge = item.calibrationMode === 'none'
                   ? {
                       label: 'Tanpa kalibrasi',
-                      className: 'bg-slate-500/10 text-slate-400 border border-slate-500/20',
+                      className: 'bg-slate-300/10 text-slate-600 border border-slate-400/20',
                     }
                   : getCalibrationBadge(item.jadwalKalibrasi);
 
                 return (
-                <div key={item.id} className="bg-slate-900 border border-white/10 rounded-xl overflow-hidden flex flex-col group relative">
-                  <div className="w-full aspect-[4/3] relative bg-slate-800 shrink-0">
+                <div key={item.id} className="bg-slate-50 border border-white/10 rounded-xl overflow-hidden flex flex-col group relative">
+                  <div className="w-full aspect-[4/3] relative bg-white shrink-0">
                     <Image src={item.gambarUrl || getPlaceholder(item.kategori)} alt={item.nama} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized/>
-                    <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur border border-white/10 px-2 py-1 rounded text-xs font-mono text-sky-400">{item.kode}</div>
-                    <div className="absolute top-2 right-2 flex gap-1 bg-slate-900/80 backdrop-blur rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="p-1.5 hover:bg-sky-500/20 text-slate-300 hover:text-sky-400 rounded-md transition-colors"><Edit2 size={14}/></button>}
-                      {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="p-1.5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 rounded-md transition-colors"><Trash2 size={14}/></button>}
+                    <div className="absolute top-3 left-3 bg-slate-50/80 backdrop-blur border border-white/10 px-2 py-1 rounded text-xs font-mono text-sky-400">{item.kode}</div>
+                    <div className="absolute top-2 right-2 flex gap-1 bg-slate-50/80 backdrop-blur rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="p-1.5 hover:bg-sky-500/20 text-slate-700 hover:text-sky-400 rounded-md transition-colors"><Edit2 size={14}/></button>}
+                      {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="p-1.5 hover:bg-rose-500/20 text-slate-700 hover:text-rose-400 rounded-md transition-colors"><Trash2 size={14}/></button>}
                     </div>
                   </div>
                   <div className="p-4 flex flex-col gap-3 flex-1">
                     <div>
-                      <h3 className="font-bold text-slate-200 line-clamp-1 text-base">{item.nama}</h3>
-                      <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">{item.kategori}</p>
+                      <h3 className="font-bold text-slate-800 line-clamp-1 text-base">{item.nama}</h3>
+                      <p className="text-xs text-slate-600 line-clamp-1 mt-0.5">{item.kategori}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-2 mt-auto">
                       <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
                         <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Jumlah</div>
-                        <div className="text-sm text-slate-100 font-semibold mt-1">{item.jumlah}</div>
+                        <div className="text-sm text-slate-800 font-semibold mt-1">{item.jumlah}</div>
                       </div>
                       <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
                         <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Pengadaan</div>
-                        <div className="text-sm text-slate-100 font-semibold mt-1">{item.tahunPengadaan ?? '-'}</div>
+                        <div className="text-sm text-slate-800 font-semibold mt-1">{item.tahunPengadaan ?? '-'}</div>
                       </div>
                       <div className="rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
                         <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Kalibrasi</div>
-                        <div className="text-sm text-slate-100 font-semibold mt-1">{item.calibrationMode === 'none' ? 'Tanpa kalibrasi' : formatDateIndonesia(item.jadwalKalibrasi)}</div>
+                        <div className="text-sm text-slate-800 font-semibold mt-1">{item.calibrationMode === 'none' ? 'Tanpa kalibrasi' : formatDateIndonesia(item.jadwalKalibrasi)}</div>
                       </div>
                     </div>
                     <div className="mt-2 grid grid-cols-2 gap-2">
@@ -381,15 +381,15 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
             <div className="overflow-x-auto">
               <table className="w-full min-w-[980px] text-left border-collapse whitespace-nowrap">
                 <thead>
-                  <tr className="border-b border-white/10 bg-slate-900/50">
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold w-24">Kode Alkes</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Info Alat</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kategori</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Jumlah</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Pengadaan</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kalibrasi</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold">Kelayakan</th>
-                    <th className="py-3 px-4 text-xs text-slate-400 uppercase tracking-wider font-semibold text-right">Aksi</th>
+                  <tr className="border-b border-white/10 bg-slate-50/50">
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold w-24">Kode Alkes</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Info Alat</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Kategori</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Jumlah</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Pengadaan</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Kalibrasi</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold">Kelayakan</th>
+                    <th className="py-3 px-4 text-xs text-slate-600 uppercase tracking-wider font-semibold text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -397,7 +397,7 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                     const calibrationBadge = item.calibrationMode === 'none'
                       ? {
                           label: 'Tanpa kalibrasi',
-                          className: 'bg-slate-500/10 text-slate-400 border border-slate-500/20',
+                          className: 'bg-slate-300/10 text-slate-600 border border-slate-400/20',
                         }
                       : getCalibrationBadge(item.jadwalKalibrasi);
 
@@ -406,25 +406,25 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                       <td className="py-3 px-4 text-sm font-mono text-sky-400">{item.kode}</td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-slate-800 border border-white/10 overflow-hidden relative shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-white border border-white/10 overflow-hidden relative shrink-0">
                             <Image src={item.gambarUrl || getPlaceholder(item.kategori)} alt={item.nama} fill className="object-cover" unoptimized/>
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-sm font-semibold text-slate-200">{item.nama}</span>
+                            <span className="text-sm font-semibold text-slate-800">{item.nama}</span>
                             {item.keterangan ? <span className="text-xs text-slate-500 truncate max-w-[260px] mt-0.5">{item.keterangan}</span> : null}
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-sm text-slate-300">{item.kategori}</td>
-                      <td className="py-3 px-4 text-sm text-slate-300">{item.jumlah}</td>
-                      <td className="py-3 px-4 text-sm text-slate-300">{item.tahunPengadaan ?? '-'}</td>
+                      <td className="py-3 px-4 text-sm text-slate-700">{item.kategori}</td>
+                      <td className="py-3 px-4 text-sm text-slate-700">{item.jumlah}</td>
+                      <td className="py-3 px-4 text-sm text-slate-700">{item.tahunPengadaan ?? '-'}</td>
                       <td className="py-3 px-4">
                         <div className="flex flex-col">
                           {item.calibrationMode === 'none' ? (
                             <span className="text-sm text-slate-500">Tanpa kalibrasi</span>
                           ) : (
                             <>
-                              <span className="text-sm text-slate-300">{formatDateIndonesia(item.kalibrasiTerakhir)}</span>
+                              <span className="text-sm text-slate-700">{formatDateIndonesia(item.kalibrasiTerakhir)}</span>
                               <span className="text-xs text-sky-400 mt-0.5">{formatDateIndonesia(item.jadwalKalibrasi)}</span>
                             </>
                           )}
@@ -438,10 +438,10 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                       </td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex justify-end gap-2">
-                          {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="p-1.5 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50">
+                          {permissions.u && <button onClick={() => handleOpenEdit(item)} disabled={isPending} className="p-1.5 text-slate-600 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg border border-transparent hover:border-sky-400/20 disabled:opacity-50">
                             <Edit2 size={16} />
                           </button>}
-                          {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50">
+                          {permissions.d && <button onClick={() => handleDelete(item.id)} disabled={isPending} className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg border border-transparent hover:border-rose-400/20 disabled:opacity-50">
                             <Trash2 size={16} />
                           </button>}
                         </div>
@@ -458,24 +458,24 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
       {/* Modal Form Tambah */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSave} className="bg-slate-800 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+          <form onSubmit={handleSave} className="bg-white border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
-              <h2 className="text-lg font-bold text-slate-50">{formMode === 'add' ? 'Tambah Alat Kesehatan' : 'Edit Alat Kesehatan'}</h2>
-              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="text-slate-400 hover:text-slate-200 ">
+              <h2 className="text-lg font-bold text-slate-900">{formMode === 'add' ? 'Tambah Alat Kesehatan' : 'Edit Alat Kesehatan'}</h2>
+              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="text-slate-600 hover:text-slate-800 ">
                 <X size={20} />
               </button>
             </div>
             
             <div className="p-6 overflow-y-auto flex flex-col gap-6 flex-1 custom-scrollbar">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Nama Alat <span className="text-rose-400">*</span></label>
-                <input required value={nama} onChange={e=>setNama(e.target.value)} disabled={isPending || isUploading} type="text" placeholder="Contoh: Kursi Gigi Belmont" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                <label className="text-sm font-medium text-slate-700">Nama Alat <span className="text-rose-400">*</span></label>
+                <input required value={nama} onChange={e=>setNama(e.target.value)} disabled={isPending || isUploading} type="text" placeholder="Contoh: Kursi Gigi Belmont" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Kategori <span className="text-rose-400">*</span></label>
-                  <select required value={kategori} onChange={e=>setKategori(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50">
+                  <label className="text-sm font-medium text-slate-700">Kategori <span className="text-rose-400">*</span></label>
+                  <select required value={kategori} onChange={e=>setKategori(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-600 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200">
                     <option value="" disabled>Pilih Kategori...</option>
                     <option value="Non Elektromedik">Non Elektromedik</option>
                     <option value="Alkes Elektromedis">Alkes Elektromedis</option>
@@ -484,22 +484,22 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Jumlah <span className="text-rose-400">*</span></label>
-                  <input required value={jumlah} onChange={e=>setJumlah(e.target.value)} disabled={isPending || isUploading} type="number" min="0" step="1" placeholder="Contoh: 1" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                  <label className="text-sm font-medium text-slate-700">Jumlah <span className="text-rose-400">*</span></label>
+                  <input required value={jumlah} onChange={e=>setJumlah(e.target.value)} disabled={isPending || isUploading} type="number" min="0" step="1" placeholder="Contoh: 1" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Tahun Pengadaan <span className="text-rose-400">*</span></label>
-                  <input required value={tahunPengadaan} onChange={e=>setTahunPengadaan(e.target.value)} disabled={isPending || isUploading} type="text" inputMode="numeric" maxLength={4} placeholder="Contoh: 2024" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50" />
+                  <label className="text-sm font-medium text-slate-700">Tahun Pengadaan <span className="text-rose-400">*</span></label>
+                  <input required value={tahunPengadaan} onChange={e=>setTahunPengadaan(e.target.value)} disabled={isPending || isUploading} type="text" inputMode="numeric" maxLength={4} placeholder="Contoh: 2024" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Kondisi / Kelayakan <span className="text-rose-400">*</span></label>
-                  <select required value={kondisi} onChange={e=>setKondisi(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50">
+                  <label className="text-sm font-medium text-slate-700">Kondisi / Kelayakan <span className="text-rose-400">*</span></label>
+                  <select required value={kondisi} onChange={e=>setKondisi(e.target.value)} disabled={isPending || isUploading} className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-600 focus:outline-none focus:border-sky-500 appearance-none disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200">
                     <option value="" disabled>Kelayakan Pakai</option>
                     <option value="Layak Pakai">Layak Pakai</option>
                     <option value="Butuh Perbaikan">Butuh Perbaikan</option>
@@ -507,19 +507,19 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Aturan Kalibrasi <span className="text-rose-400">*</span></label>
-                  <div className="grid grid-cols-1 gap-2 rounded-xl border border-white/10 bg-slate-900 p-3">
+                  <label className="text-sm font-medium text-slate-700">Aturan Kalibrasi <span className="text-rose-400">*</span></label>
+                  <div className="grid grid-cols-1 gap-2 rounded-xl border border-white/10 bg-slate-50 p-3">
                     <label className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 cursor-pointer">
                       <input type="radio" name="calibrationMode" value="required" checked={calibrationMode === 'required'} onChange={() => setCalibrationMode('required')} disabled={isPending || isUploading} className="mt-1" />
                       <span className="flex flex-col">
-                        <span className="text-sm font-medium text-slate-200">Wajib Kalibrasi</span>
+                        <span className="text-sm font-medium text-slate-800">Wajib Kalibrasi</span>
                         <span className="text-xs text-slate-500">Tanggal kalibrasi terakhir dan rencana kalibrasi wajib diisi.</span>
                       </span>
                     </label>
                     <label className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 cursor-pointer">
                       <input type="radio" name="calibrationMode" value="none" checked={calibrationMode === 'none'} onChange={() => setCalibrationMode('none')} disabled={isPending || isUploading} className="mt-1" />
                       <span className="flex flex-col">
-                        <span className="text-sm font-medium text-slate-200">Tanpa Kalibrasi</span>
+                        <span className="text-sm font-medium text-slate-800">Tanpa Kalibrasi</span>
                         <span className="text-xs text-slate-500">Untuk alat seperti pinset anatomis dan alat lain yang tidak perlu kalibrasi.</span>
                       </span>
                     </label>
@@ -529,32 +529,32 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Kalibrasi Terakhir {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
-                  <input required={calibrationMode === 'required'} value={kalibrasiTerakhir} onChange={e=>setKalibrasiTerakhir(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50" />
+                  <label className="text-sm font-medium text-slate-700">Kalibrasi Terakhir {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
+                  <input required={calibrationMode === 'required'} value={kalibrasiTerakhir} onChange={e=>setKalibrasiTerakhir(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-slate-300">Jadwal Kalibrasi {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
-                  <input required={calibrationMode === 'required'} value={jadwalKalibrasi} onChange={e=>setJadwalKalibrasi(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50" />
+                  <label className="text-sm font-medium text-slate-700">Jadwal Kalibrasi {calibrationMode === 'required' && <span className="text-rose-400">*</span>}</label>
+                  <input required={calibrationMode === 'required'} value={jadwalKalibrasi} onChange={e=>setJadwalKalibrasi(e.target.value)} disabled={isPending || isUploading || calibrationMode === 'none'} type="date" className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 [color-scheme:dark] disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200" />
                   <span className="text-xs text-slate-500">Jika wajib kalibrasi, jadwal tidak boleh lebih awal dari kalibrasi terakhir.</span>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-slate-300">Keterangan</label>
-                <textarea value={keterangan} onChange={e=>setKeterangan(e.target.value)} disabled={isPending || isUploading} rows={2} placeholder="Keterangan tambahan..." className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-sky-500 disabled:opacity-50"></textarea>
+                <label className="text-sm font-medium text-slate-700">Keterangan</label>
+                <textarea value={keterangan} onChange={e=>setKeterangan(e.target.value)} disabled={isPending || isUploading} rows={2} placeholder="Keterangan tambahan..." className="w-full bg-slate-50 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-sky-500 disabled:opacity-50 shadow-sm focus:shadow-md transition-shadow duration-200"></textarea>
               </div>
 
               {/* Upload Foto Alkes */}
-              <div className="bg-slate-900 border border-white/10 p-5 rounded-xl mt-2">
-                 <label className="text-sm font-medium text-slate-300 mb-2 block">Upload Foto Alat Kesehatan {formMode === 'add' && <span className="text-rose-400">*</span>}</label>
+              <div className="bg-slate-50 border border-white/10 p-5 rounded-xl mt-2">
+                 <label className="text-sm font-medium text-slate-700 mb-2 block">Upload Foto Alat Kesehatan {formMode === 'add' && <span className="text-rose-400">*</span>}</label>
                  
                  <input type="file" accept="image/*" ref={fileInput} onChange={e => setFile(e.target.files?.[0] || null)} className="hidden" />
                  
-                 <div onClick={() => fileInput.current?.click()} className={`border-2 border-dashed rounded-xl bg-slate-800 p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}>
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${file ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-400 group-hover:text-sky-400'}`}>
+                 <div onClick={() => fileInput.current?.click()} className={`border-2 border-dashed rounded-xl bg-white p-6 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors ${file ? 'border-sky-500/50 hover:border-sky-400' : 'border-white/10 hover:border-sky-500/50'}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${file ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-slate-600 group-hover:text-sky-400'}`}>
                       {file ? <CheckCircle2 size={24} /> : <Upload size={24} />}
                     </div>
-                    <div className="text-base font-semibold text-slate-200 mb-1">
+                    <div className="text-base font-semibold text-slate-800 mb-1">
                        {file ? "File Siap Diupload" : existingImage ? "Foto lama dipakai" : "Klik untuk pilih foto alat"}
                     </div>
                     <div className="text-sm text-sky-400 font-mono truncate max-w-[250px]">{file ? file.name : existingImage ? 'Pilih file baru untuk mengganti' : 'Maksimal 5MB (JPG/PNG)'}</div>
@@ -563,8 +563,8 @@ export default function AlkesClient({ initialData, permissions }: { initialData:
 
             </div>
 
-            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-slate-800/80 rounded-b-2xl">
-              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/5 disabled:opacity-50">Batal</button>
+            <div className="px-6 py-4 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-white/80 rounded-b-2xl">
+              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isPending || isUploading} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-white/5 disabled:opacity-50">Batal</button>
               <button type="submit" disabled={isPending || isUploading} className="px-5 py-2 rounded-lg text-sm font-semibold bg-sky-500 text-slate-950 hover:bg-sky-600 shadow-sm flex items-center gap-2 disabled:opacity-50">
                   {isUploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : isPending ? <><Loader2 size={16} className="animate-spin" /> Menyimpan</> : formMode === 'add' ? 'Simpan Inventaris' : 'Simpan Perubahan'}
               </button>

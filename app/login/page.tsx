@@ -58,7 +58,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto mb-6 flex h-24 w-40 items-center justify-center rounded-2xl bg-white p-4 shadow-lg shadow-slate-950/30">
@@ -72,19 +72,19 @@ export default function LoginPage() {
               unoptimized
             />
           </div>
-          <h2 className="text-3xl font-bold text-slate-50">Login RCIS</h2>
-          <p className="mt-2 text-slate-400">Masuk ke sistem Rail Clinic Inventory System</p>
+          <h2 className="text-3xl font-bold text-slate-900">Login RCIS</h2>
+          <p className="mt-2 text-slate-600">Masuk ke sistem Rail Clinic Inventory System</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label htmlFor="nip" className="block text-sm font-medium text-slate-300">
+            <label htmlFor="nip" className="block text-sm font-medium text-slate-700">
               NIPP
             </label>
             <input
               {...register('nip')}
               type="text"
-              className="mt-1 block w-full px-3 py-2 border border-slate-600 rounded-md shadow-sm bg-slate-800 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-sky-500 focus:border-sky-500"
+              className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-sky-500 focus:border-sky-500"
               placeholder="Masukkan NIPP"
             />
             {errors.nip && (
@@ -93,20 +93,20 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-300">
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
               Password
             </label>
             <div className="relative">
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                className="mt-1 block w-full px-3 py-2 pr-10 border border-slate-600 rounded-md shadow-sm bg-slate-800 text-slate-50 placeholder-slate-400 focus:outline-none focus:ring-sky-500 focus:border-sky-500"
+                className="mt-1 block w-full px-3 py-2 pr-10 border border-slate-300 rounded-md shadow-sm bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-sky-500 focus:border-sky-500"
                 placeholder="Masukkan password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-300"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-600 hover:text-slate-700"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
