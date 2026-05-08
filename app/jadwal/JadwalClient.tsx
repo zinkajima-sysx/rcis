@@ -251,13 +251,13 @@ export default function JadwalClient({
                 .filter((item) => item.status !== 'Selesai')
                 .sort((left, right) => new Date(left.date).getTime() - new Date(right.date).getTime())
                 .map((item) => (
-                  <div key={`${item.id}-agenda`} className={`p-4 rounded-xl flex flex-col gap-2 relative overflow-hidden border cursor-pointer hover:bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ${item.status === 'Berlangsung' ? 'bg-slate-50/80 border-sky-500/20' : 'bg-slate-50/50 border-white/5 hover:border-white/10'}`} onClick={() => setSelectedEvent(item)}>
+                  <div key={`${item.id}-agenda`} className={`p-4 rounded-xl flex flex-col gap-2.5 relative overflow-hidden border cursor-pointer hover:bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ${item.status === 'Berlangsung' ? 'bg-slate-50/80 border-sky-500/20' : 'bg-slate-50/50 border-white/5 hover:border-white/10'}`} onClick={() => setSelectedEvent(item)}>
                     {item.status === 'Berlangsung' && <div className="absolute left-0 top-0 w-1 h-full bg-sky-500"></div>}
-                    <div className="flex justify-between items-start gap-2">
-                      <h3 className="font-semibold text-slate-900 text-sm line-clamp-2 leading-tight">{item.title}</h3>
+                    <div className="flex justify-between items-start gap-2 min-h-[42px]">
+                      <h3 className="font-semibold text-slate-900 text-sm line-clamp-2 leading-snug">{item.title}</h3>
                       <span className={`text-[10px] px-2 py-0.5 rounded font-medium border shrink-0 ${getStatusBadge(item.status)}`}>{item.status}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-600 mt-1 font-mono">{item.date}</div>
+                    <div className="flex items-center gap-2 text-xs text-slate-600 font-mono">{item.date}</div>
                     <div className="flex items-center gap-2 text-xs text-slate-600">
                       <MapPin size={14} className="text-slate-500" /> {item.location} ({item.daop})
                     </div>

@@ -530,10 +530,9 @@ export default function HandoverClient({
           <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 text-sm text-slate-700">
             <div className="font-semibold text-sky-400 mb-2">Format & aturan</div>
             <ul className="space-y-2 text-sm text-slate-700">
-              <li>Semua field tanggal menggunakan date picker.</li>
-              <li>Tanggal kegiatan tujuan tidak boleh sama dengan tanggal kegiatan asal.</li>
-              <li>Penyerah dan penerima diambil dari referensi user aktif.</li>
-              <li>Wilayah asal dan tujuan diambil dari referensi DAOP/DIVRE.</li>
+              <li>1. Tanggal kegiatan tujuan tidak boleh sama dengan tanggal kegiatan asal.</li>
+              <li>2. Input NIPP untuk Petugas yang melakukan Serah terima</li>
+              <li>3. Jika NIPP tidak ada berarti belum ada di Master data User.</li>
             </ul>
           </div>
         </aside>
